@@ -7,9 +7,9 @@ export function Sidebar() {
   const [location] = useLocation();
 
   const navigation = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
-    { name: "Inventory", href: "/inventory", icon: Package },
-    { name: "Add Asset", href: "/inventory/new", icon: PlusCircle },
+    { name: "Operations Overview", href: "/", icon: LayoutDashboard },
+    { name: "Seed Inventory", href: "/inventory", icon: Package },
+    { name: "Register Batch", href: "/inventory/new", icon: PlusCircle },
   ];
 
   return (

@@ -28,12 +28,14 @@ import {
   PlusCircle,
   Truck,
   CheckCircle,
-  Clock,
   Trash2,
   Edit2,
   Save,
-  X
+  X,
+  QrCode,
+  Download
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,6 +67,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const movementSchema = z.object({
   type: z.enum(["Created", "Stored", "Dispatched", "Delivered"]),
@@ -160,7 +170,7 @@ export default function AssetDetail() {
   const handleDelete = () => {
     deleteAsset.mutate({ id: asset.id }, {
       onSuccess: () => {
-        toast.success("Asset deleted successfully");
+        toast.success("Batch deleted successfully");
         queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
         queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
         setLocation("/inventory");
@@ -255,7 +265,7 @@ export default function AssetDetail() {
     >
       <motion.div variants={itemVariants}>
         <Link href="/inventory" className="text-[13px] font-semibold text-muted-foreground hover:text-foreground inline-flex items-center mb-6 transition-colors group px-3 py-1.5 -ml-3 rounded-lg hover:bg-muted/50">
-          <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Inventory
+          <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Seed Inventory
         </Link>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
           <div>
@@ -265,10 +275,30 @@ export default function AssetDetail() {
             </div>
             <p className="text-muted-foreground font-mono mt-1 text-[15px] font-medium">{asset.batchNumber}</p>
           </div>
-          <div className="flex gap-3">
-            <Button variant={isEditing ? "default" : "outline"} className={`h-10 px-5 rounded-xl font-semibold shadow-sm transition-all ${isEditing ? "bg-muted text-foreground hover:bg-muted/80 border-border/50" : "bg-card border-border/60 hover:bg-muted/50"}`} onClick={() => setIsEditing(!isEditing)}>
+          <div className="flex gap-3 flex-wrap">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-10 px-5 rounded-xl font-semibold shadow-sm bg-card border-border/60 hover:bg-muted/50 active:scale-[0.97] transition-all">
+                  <QrCode className="h-4 w-4 mr-2" /> QR Code
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="rounded-2xl border-border/60 shadow-xl max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-xl">Batch QR Code</DialogTitle>
+                  <DialogDescription className="text-[14px]">
+                    Scan this code to open the batch detail page on any device.
+                  </DialogDescription>
+                </DialogHeader>
+                <BatchQrCard
+                  batchNumber={asset.batchNumber}
+                  seedName={asset.seedName}
+                  assetId={asset.id}
+                />
+              </DialogContent>
+            </Dialog>
+            <Button variant={isEditing ? "default" : "outline"} className={`h-10 px-5 rounded-xl font-semibold shadow-sm transition-all active:scale-[0.97] ${isEditing ? "bg-muted text-foreground hover:bg-muted/80 border-border/50" : "bg-card border-border/60 hover:bg-muted/50"}`} onClick={() => setIsEditing(!isEditing)}>
               {isEditing ? <X className="h-4 w-4 mr-2" /> : <Edit2 className="h-4 w-4 mr-2" />}
-              {isEditing ? "Cancel Edit" : "Edit Asset"}
+              {isEditing ? "Cancel Edit" : "Edit Batch"}
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -278,7 +308,7 @@ export default function AssetDetail() {
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-2xl border-border/60 shadow-xl">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-xl">Delete Asset</AlertDialogTitle>
+                  <AlertDialogTitle className="text-xl">Delete Batch</AlertDialogTitle>
                   <AlertDialogDescription className="text-[15px]">
                     This will permanently delete <strong>{asset.seedName}</strong> and its history. This cannot be undone.
                   </AlertDialogDescription>
@@ -468,5 +498,81 @@ export default function AssetDetail() {
         </motion.div>
       </div>
     </motion.div>
+  );
+}
+
+function BatchQrCard({
+  batchNumber,
+  seedName,
+  assetId,
+}: {
+  batchNumber: string;
+  seedName: string;
+  assetId: string;
+}) {
+  const url = `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, "")}/inventory/${assetId}`;
+
+  const handleDownload = () => {
+    const svg = document.getElementById("batch-qr-svg") as SVGSVGElement | null;
+    if (!svg) {
+      toast.error("Unable to find QR code");
+      return;
+    }
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = `${batchNumber}-qr.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
+    toast.success("QR code downloaded");
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Batch link copied");
+    } catch {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-5 pt-4">
+      <div className="bg-white p-5 rounded-2xl shadow-md border border-border/60">
+        <QRCodeSVG
+          id="batch-qr-svg"
+          value={url}
+          size={192}
+          level="M"
+          includeMargin={false}
+        />
+      </div>
+      <div className="text-center space-y-1">
+        <p className="text-[15px] font-bold text-foreground">{seedName}</p>
+        <p className="text-[12px] font-mono text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md inline-block">
+          {batchNumber}
+        </p>
+      </div>
+      <div className="flex gap-3 w-full">
+        <Button
+          onClick={handleCopy}
+          variant="outline"
+          className="flex-1 h-10 rounded-xl font-semibold border-border/60 active:scale-[0.97] transition-all"
+        >
+          Copy Link
+        </Button>
+        <Button
+          onClick={handleDownload}
+          className="flex-1 h-10 rounded-xl font-semibold shadow-sm active:scale-[0.97] transition-all"
+        >
+          <Download className="h-4 w-4 mr-2" /> Download
+        </Button>
+      </div>
+    </div>
   );
 }

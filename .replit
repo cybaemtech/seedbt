@@ -11,6 +11,37 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "API Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Frontend"
+
+[[workflows.workflow]]
+name = "API Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=8080 NODE_ENV=development pnpm --filter @workspace/api-server run dev"
+waitForPort = 8080
+
+[[workflows.workflow]]
+name = "Frontend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=23005 BASE_PATH=/ pnpm --filter @workspace/seedtrack-pro run dev"
+waitForPort = 23005
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true

@@ -13,7 +13,8 @@ import {
 
 export function GlobalSearch({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
   const [, setLocation] = useLocation();
-  const { data: assets } = useListAssets({ query: { enabled: open, queryKey: getListAssetsQueryKey() } });
+  const { data: assetsRaw } = useListAssets({ query: { enabled: open, queryKey: getListAssetsQueryKey() } });
+  const assets = Array.isArray(assetsRaw) ? assetsRaw : [];
 
   const runCommand = React.useCallback((command: () => unknown) => {
     onOpenChange(false);
@@ -22,12 +23,12 @@ export function GlobalSearch({ open, onOpenChange }: { open: boolean, onOpenChan
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder="Type a command or search..." className="h-14 text-[15px]" />
+      <CommandInput placeholder="Search by seed, batch, or location..." className="h-14 text-[15px]" />
       <CommandList className="max-h-[400px] p-2">
         <CommandEmpty className="py-12 text-center text-[15px] font-medium text-muted-foreground">No results found.</CommandEmpty>
         
         {assets && assets.length > 0 && (
-          <CommandGroup heading="Assets" className="text-muted-foreground font-semibold px-2 py-3">
+          <CommandGroup heading="Batches" className="text-muted-foreground font-semibold px-2 py-3">
             {assets.map((asset) => (
               <CommandItem
                 key={asset.id}
@@ -56,7 +57,7 @@ export function GlobalSearch({ open, onOpenChange }: { open: boolean, onOpenChan
             <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
                <Search className="h-5 w-5 text-muted-foreground" />
             </div>
-            <span className="font-semibold text-[15px]">Add new asset</span>
+            <span className="font-semibold text-[15px]">Register new batch</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>

@@ -16,14 +16,24 @@ file as the data store (no database).
 
 ## Features
 
-- Dashboard with summary cards, alert groups (expiring / expired / low stock),
-  and a recent activity feed.
-- Inventory table with search, status filter, and color-coded status badges.
-  Status (Fresh / Expiring / Expired) is auto-calculated from `expiryDate`
-  on every read.
-- Add / edit / delete asset workflows with confirmation.
-- Per-asset batch detail page with a vertical movement-history timeline
-  and a "Log Movement" form (Created / Stored / Dispatched / Delivered).
+- **Operations Overview** (formerly "Dashboard") with summary cards, alert
+  groups (expiring / expired / low stock), and a recent activity feed.
+- **Analytics** powered by Recharts: Inventory Over Time (Area), Seed
+  Categories (Pie), Expiring vs Fresh (Bar) — see `DashboardCharts.tsx`.
+- **Risk Summary** card showing at-risk batches, total expiring quantity, and
+  estimated loss value (`$12 / unit` placeholder).
+- **Seed Inventory** (formerly "Inventory") table with search, status filter,
+  and color-coded status badges. Status (Fresh / Expiring / Expired) is
+  auto-calculated from `expiryDate` on every read.
+- **Register Batch** (formerly "Add Asset") workflow + edit / delete with
+  confirmation.
+- Per-batch detail page with vertical movement-history timeline and a
+  "Log Movement" form (Created / Stored / Dispatched / Delivered).
+- **Batch QR Code** (wow feature): every batch detail page exposes a QR
+  Dialog that generates an SVG QR pointing at the batch URL, with
+  copy-link and download-SVG actions (`qrcode.react`).
+- Micro-interactions: framer-motion entrance animations, button
+  press-scale, loading skeletons, and `sonner` toast notifications.
 
 ## API Endpoints
 

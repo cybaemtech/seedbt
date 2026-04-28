@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 
 // Helper to synthesize sparkline data
 const generateTrendData = (baseValue: number, volatility: number = 0.2) => {
@@ -39,7 +40,8 @@ const itemVariants = {
 export default function Dashboard() {
   const { data: summary, isLoading: isSummaryLoading } = useGetDashboardSummary();
   const { data: alerts, isLoading: isAlertsLoading } = useGetAlerts();
-  const { data: recentActivity, isLoading: isActivityLoading } = useGetRecentActivity();
+  const { data: recentActivityRaw, isLoading: isActivityLoading } = useGetRecentActivity();
+  const recentActivity = Array.isArray(recentActivityRaw) ? recentActivityRaw : [];
 
   if (isSummaryLoading || isAlertsLoading || isActivityLoading) {
     return (
@@ -65,7 +67,7 @@ export default function Dashboard() {
       className="p-8 md:p-10 space-y-10 max-w-7xl mx-auto"
     >
       <motion.div variants={itemVariants}>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Overview</h1>
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">Operations Overview</h1>
         <p className="text-base text-muted-foreground mt-2">Monitor your seed inventory health and operations.</p>
       </motion.div>
 
@@ -161,6 +163,8 @@ export default function Dashboard() {
           </Card>
         </motion.div>
       </div>
+
+      <DashboardCharts />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         <motion.div variants={itemVariants} className="lg:col-span-3 space-y-5">

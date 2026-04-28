@@ -58,7 +58,7 @@ export default function AddAsset() {
         onSuccess: (asset) => {
           queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-          toast.success("Asset created successfully");
+          toast.success("Batch registered successfully");
           setLocation(`/inventory/${asset.id}`);
         },
         onError: () => {
@@ -77,9 +77,9 @@ export default function AddAsset() {
     >
       <div>
         <Link href="/inventory" className="text-[13px] font-semibold text-muted-foreground hover:text-foreground inline-flex items-center mb-6 transition-colors group px-3 py-1.5 -ml-3 rounded-lg hover:bg-muted/50">
-          <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Inventory
+          <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Seed Inventory
         </Link>
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">Add New Asset</h1>
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">Register Batch</h1>
         <p className="text-base text-muted-foreground mt-2">Register a new seed batch into the inventory system.</p>
       </div>
 
@@ -173,10 +173,10 @@ export default function AddAsset() {
 
           <div className="fixed bottom-0 right-0 left-0 md:left-[260px] p-5 bg-background/80 backdrop-blur-xl border-t border-border/60 flex justify-end gap-4 z-10 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
             <Link href="/inventory">
-              <Button variant="outline" type="button" className="h-11 px-6 rounded-xl font-semibold shadow-sm border-border/60">Cancel</Button>
+              <Button variant="outline" type="button" className="h-11 px-6 rounded-xl font-semibold shadow-sm border-border/60 active:scale-[0.97]">Cancel</Button>
             </Link>
-            <Button type="submit" disabled={createAsset.isPending} className="h-11 px-8 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all">
-              {createAsset.isPending ? "Creating..." : "Create Asset"}
+            <Button type="submit" disabled={createAsset.isPending} className="h-11 px-8 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all active:scale-[0.97]">
+              {createAsset.isPending ? "Registering..." : "Register Batch"}
             </Button>
           </div>
         </form>

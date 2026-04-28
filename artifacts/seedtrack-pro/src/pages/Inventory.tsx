@@ -58,7 +58,8 @@ const itemVariants = {
 };
 
 export default function Inventory() {
-  const { data: assets, isLoading } = useListAssets();
+  const { data: assetsRaw, isLoading } = useListAssets();
+  const assets = Array.isArray(assetsRaw) ? assetsRaw : [];
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [, setLocation] = useLocation();
@@ -78,12 +79,12 @@ export default function Inventory() {
     if (!assetToDelete) return;
     deleteAsset.mutate({ id: assetToDelete }, {
       onSuccess: () => {
-        toast.success("Asset deleted successfully");
+        toast.success("Batch deleted successfully");
         queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
         queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
         setAssetToDelete(null);
       },
-      onError: () => toast.error("Failed to delete asset")
+      onError: () => toast.error("Failed to delete batch")
     });
   };
 
@@ -125,13 +126,13 @@ export default function Inventory() {
     >
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Inventory</h1>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Seed Inventory</h1>
           <p className="text-base text-muted-foreground mt-2">Manage and track all seed batches.</p>
         </div>
         <Link href="/inventory/new">
-          <Button className="gap-2 shadow-md hover:shadow-lg transition-all rounded-xl h-10 px-5 font-semibold">
+          <Button className="gap-2 shadow-md hover:shadow-lg transition-all rounded-xl h-10 px-5 font-semibold active:scale-[0.97]">
             <Plus className="h-4 w-4" />
-            Add Asset
+            Register Batch
           </Button>
         </Link>
       </motion.div>
@@ -203,7 +204,7 @@ export default function Inventory() {
                     )}
                     {(!search && statusFilter === "All") && (
                       <Link href="/inventory/new">
-                        <Button className="h-10 px-6 rounded-xl font-semibold shadow-sm">Add Asset</Button>
+                        <Button className="h-10 px-6 rounded-xl font-semibold shadow-sm active:scale-[0.97]">Register Batch</Button>
                       </Link>
                     )}
                   </div>
@@ -248,7 +249,7 @@ export default function Inventory() {
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setLocation(`/inventory/${asset.id}?edit=true`)} className="text-[13px] font-medium cursor-pointer rounded-lg py-2">
                             <Edit2 className="mr-2.5 h-4 w-4 text-muted-foreground" />
-                            Edit Asset
+                            Edit Batch
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="my-1 bg-border/60" />
                           <DropdownMenuItem 
@@ -256,7 +257,7 @@ export default function Inventory() {
                             className="text-[13px] font-semibold text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer rounded-lg py-2"
                           >
                             <Trash2 className="mr-2.5 h-4 w-4" />
-                            Delete Asset
+                            Delete Batch
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -272,9 +273,9 @@ export default function Inventory() {
       <AlertDialog open={!!assetToDelete} onOpenChange={(open) => !open && setAssetToDelete(null)}>
         <AlertDialogContent className="rounded-2xl border-border/60 shadow-xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl">Delete Asset</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl">Delete Batch</AlertDialogTitle>
             <AlertDialogDescription className="text-[15px]">
-              Are you sure you want to delete this asset? This action cannot be undone and will remove all movement history associated with it.
+              Are you sure you want to delete this batch? This action cannot be undone and will remove all movement history associated with it.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6 gap-3">
