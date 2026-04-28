@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "SeedTrack Pro"
+version = "1.0.0"
+id = "artifacts/seedtrack-pro"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23005
+
+[services.development]
+run = "pnpm --filter @workspace/seedtrack-pro run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/seedtrack-pro", "run", "build" ]
+publicDir = "artifacts/seedtrack-pro/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23005"
+BASE_PATH = "/"

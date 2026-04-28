@@ -1,0 +1,262 @@
+{
+  "assets": [
+    {
+      "id": "79c3b65a-c436-45c3-bdb0-028a7a126b98",
+      "seedName": "Hybrid Chilli KS-401",
+      "batchNumber": "CHL-2026-A12",
+      "quantity": 320,
+      "location": "Warehouse A — Shelf 3",
+      "expiryDate": "2026-12-04",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "c80f09ff-9d42-46d8-ae55-6bf2380b58bc",
+      "seedName": "Wheat HD-2967",
+      "batchNumber": "WHT-2026-B07",
+      "quantity": 42,
+      "location": "Warehouse B — Bin 11",
+      "expiryDate": "2026-05-16",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+      "seedName": "Maize NK-30",
+      "batchNumber": "MZE-2026-C04",
+      "quantity": 580,
+      "location": "Cold Storage 2",
+      "expiryDate": "2027-06-12",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "5a4ee2c9-88c8-4fe9-baff-ab736846837b",
+      "seedName": "Paddy MTU-1010",
+      "batchNumber": "PDY-2025-K22",
+      "quantity": 18,
+      "location": "Warehouse A — Shelf 7",
+      "expiryDate": "2026-04-16",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "b1b2633a-5802-4159-8590-eb0ad05d490f",
+      "seedName": "Cotton Bt-RCH-659",
+      "batchNumber": "CTN-2026-D19",
+      "quantity": 125,
+      "location": "Warehouse C — Pallet 5",
+      "expiryDate": "2026-08-01",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218",
+      "seedName": "Tomato Arka Rakshak",
+      "batchNumber": "TMT-2026-E03",
+      "quantity": 240,
+      "location": "Cold Storage 1",
+      "expiryDate": "2026-05-24",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "2af5dcdb-f548-4511-b564-9881137c7f50",
+      "seedName": "Soybean JS-335",
+      "batchNumber": "SBN-2026-F08",
+      "quantity": 410,
+      "location": "Warehouse B — Bin 4",
+      "expiryDate": "2027-10-20",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    },
+    {
+      "id": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+      "seedName": "Onion N-53",
+      "batchNumber": "ONI-2025-G14",
+      "quantity": 32,
+      "location": "Warehouse A — Shelf 12",
+      "expiryDate": "2026-05-05",
+      "createdAt": "2026-04-28T10:20:08.006Z"
+    }
+  ],
+  "history": {
+    "79c3b65a-c436-45c3-bdb0-028a7a126b98": [
+      {
+        "id": "ca4c0bd9-4047-4af0-ac0f-18ead585d55f",
+        "assetId": "79c3b65a-c436-45c3-bdb0-028a7a126b98",
+        "type": "Created",
+        "location": "Warehouse A — Shelf 3",
+        "notes": "Batch CHL-2026-A12 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "f40e7a35-fd1b-4276-a350-922dde7cd8a5",
+        "assetId": "79c3b65a-c436-45c3-bdb0-028a7a126b98",
+        "type": "Stored",
+        "location": "Warehouse A — Shelf 3",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "c80f09ff-9d42-46d8-ae55-6bf2380b58bc": [
+      {
+        "id": "51c0c84d-48d4-44c0-86dd-1f8dde28deb5",
+        "assetId": "c80f09ff-9d42-46d8-ae55-6bf2380b58bc",
+        "type": "Created",
+        "location": "Warehouse B — Bin 11",
+        "notes": "Batch WHT-2026-B07 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "cd9a4ab2-d1aa-4d66-87c1-cc19c751b9d3",
+        "assetId": "c80f09ff-9d42-46d8-ae55-6bf2380b58bc",
+        "type": "Stored",
+        "location": "Warehouse B — Bin 11",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "fc73fff0-dece-498b-a0a7-c4ee512b6d02": [
+      {
+        "id": "2c860e81-1cf6-4a42-8175-75ac1a5cda29",
+        "assetId": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+        "type": "Created",
+        "location": "Cold Storage 2",
+        "notes": "Batch MZE-2026-C04 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "2367b987-e121-4fa0-846a-f691989ee4c1",
+        "assetId": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+        "type": "Stored",
+        "location": "Cold Storage 2",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "b82587a3-1f5a-41af-9aee-29582ad441a5",
+        "assetId": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+        "type": "Dispatched",
+        "location": "Vehicle TN-09-AB-4521",
+        "notes": "Outbound to Coimbatore distribution hub.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "5a4ee2c9-88c8-4fe9-baff-ab736846837b": [
+      {
+        "id": "4caf5344-b2a0-4229-9cd1-33f339da4ea5",
+        "assetId": "5a4ee2c9-88c8-4fe9-baff-ab736846837b",
+        "type": "Created",
+        "location": "Warehouse A — Shelf 7",
+        "notes": "Batch PDY-2025-K22 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "bf4b387e-ab91-44c7-8c9d-8da28625206b",
+        "assetId": "5a4ee2c9-88c8-4fe9-baff-ab736846837b",
+        "type": "Stored",
+        "location": "Warehouse A — Shelf 7",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "b1b2633a-5802-4159-8590-eb0ad05d490f": [
+      {
+        "id": "4bb52483-e0bc-45f5-9dce-86bbba7585db",
+        "assetId": "b1b2633a-5802-4159-8590-eb0ad05d490f",
+        "type": "Created",
+        "location": "Warehouse C — Pallet 5",
+        "notes": "Batch CTN-2026-D19 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "05fdd255-37cc-4537-afa6-015ce29db41b",
+        "assetId": "b1b2633a-5802-4159-8590-eb0ad05d490f",
+        "type": "Stored",
+        "location": "Warehouse C — Pallet 5",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218": [
+      {
+        "id": "b3641ed7-93bd-478a-9491-12ee64ad04c5",
+        "assetId": "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218",
+        "type": "Created",
+        "location": "Cold Storage 1",
+        "notes": "Batch TMT-2026-E03 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "82a0ed62-5841-4dc9-a617-e5dc45807501",
+        "assetId": "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218",
+        "type": "Stored",
+        "location": "Cold Storage 1",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "2af5dcdb-f548-4511-b564-9881137c7f50": [
+      {
+        "id": "757c2eda-4994-43bc-b264-95ddbce731b6",
+        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "type": "Created",
+        "location": "Warehouse B — Bin 4",
+        "notes": "Batch SBN-2026-F08 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "d2e92dab-5db6-40a2-bd92-6d032680cca1",
+        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "type": "Stored",
+        "location": "Warehouse B — Bin 4",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "977563d1-8eac-471e-8b4b-80894d4dc50a",
+        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "type": "Dispatched",
+        "location": "Vehicle MH-12-XY-9087",
+        "notes": "Outbound to regional dealer network.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "0705f624-cf8a-495f-9f45-e143e1b57950",
+        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "type": "Delivered",
+        "location": "Pune Dealer Warehouse",
+        "notes": "Signed for by R. Kulkarni.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      }
+    ],
+    "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066": [
+      {
+        "id": "8a63b51f-1f51-47e5-913d-20610be346f9",
+        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "type": "Created",
+        "location": "Warehouse A — Shelf 12",
+        "notes": "Batch ONI-2025-G14 registered into the system.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "9b77736b-262a-4677-826c-6f27712e40e2",
+        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "type": "Stored",
+        "location": "Warehouse A — Shelf 12",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-28T10:20:08.006Z"
+      },
+      {
+        "id": "e9e2e4fa-eb7d-48a4-8047-120a2d963927",
+        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "type": "Stored",
+        "location": "Pune",
+        "notes": "",
+        "timestamp": "2026-04-28T10:30:39.257Z"
+      },
+      {
+        "id": "6042db4b-e9fa-4907-838f-4dc61ef6f6e4",
+        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "type": "Stored",
+        "location": "Pune",
+        "notes": "",
+        "timestamp": "2026-04-28T10:49:13.527Z"
+      }
+    ]
+  }
+}
