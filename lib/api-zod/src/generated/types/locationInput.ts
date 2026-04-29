@@ -5,10 +5,8 @@
  * SeedTrack Pro API - Asset & Batch Management
  * OpenAPI spec version: 0.2.0
  */
-import type { MovementEvent } from "./movementEvent";
 
-export interface RecentActivity {
-  event: MovementEvent;
-  seedName: string;
-  batchNumber: string;
+export interface LocationInput {
+  /** @minLength 1 */
+  name: string;
 }

@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * SeedTrack Pro API - Asset & Batch Management
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 export interface HealthStatus {
   status: string;
@@ -17,6 +17,29 @@ export const AssetStatus = {
   Expired: "Expired",
 } as const;
 
+export type SeedCategory = (typeof SeedCategory)[keyof typeof SeedCategory];
+
+export const SeedCategory = {
+  Vegetable: "Vegetable",
+  Grain: "Grain",
+  Legume: "Legume",
+  Oilseed: "Oilseed",
+  Fiber: "Fiber",
+  Spice: "Spice",
+  Fruit: "Fruit",
+  Herb: "Herb",
+  Other: "Other",
+} as const;
+
+export type ExpiryPriority =
+  (typeof ExpiryPriority)[keyof typeof ExpiryPriority];
+
+export const ExpiryPriority = {
+  SellImmediately: "SellImmediately",
+  Monitor: "Monitor",
+  Safe: "Safe",
+} as const;
+
 export type MovementEventType =
   (typeof MovementEventType)[keyof typeof MovementEventType];
 
@@ -25,6 +48,15 @@ export const MovementEventType = {
   Stored: "Stored",
   Dispatched: "Dispatched",
   Delivered: "Delivered",
+} as const;
+
+export type StockMovementType =
+  (typeof StockMovementType)[keyof typeof StockMovementType];
+
+export const StockMovementType = {
+  IN: "IN",
+  OUT: "OUT",
+  TRANSFER: "TRANSFER",
 } as const;
 
 export interface Asset {
@@ -37,6 +69,19 @@ export interface Asset {
   expiryDate: string;
   status: AssetStatus;
   createdAt: string;
+  productionDate?: string;
+  supplier?: string;
+  category?: SeedCategory;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  germinationRate?: number;
+  /** @minimum 0 */
+  pricePerUnit?: number;
+  totalValue?: number;
+  daysRemaining?: number;
+  expiryPriority?: ExpiryPriority;
 }
 
 export interface AssetInput {
@@ -49,6 +94,16 @@ export interface AssetInput {
   /** @minLength 1 */
   location: string;
   expiryDate: string;
+  productionDate?: string;
+  supplier?: string;
+  category?: SeedCategory;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  germinationRate?: number;
+  /** @minimum 0 */
+  pricePerUnit?: number;
 }
 
 export interface MovementEvent {
@@ -67,6 +122,72 @@ export interface MovementEventInput {
   notes?: string;
 }
 
+export interface StockMovement {
+  id: string;
+  assetId: string;
+  seedName: string;
+  batchNumber: string;
+  movementType: StockMovementType;
+  /** @minimum 1 */
+  quantity: number;
+  fromLocation?: string;
+  toLocation?: string;
+  date: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface StockMovementInput {
+  /** @minLength 1 */
+  assetId: string;
+  movementType: StockMovementType;
+  /** @minimum 1 */
+  quantity: number;
+  fromLocation?: string;
+  toLocation?: string;
+  date: string;
+  notes?: string;
+}
+
+export interface LocationInput {
+  /** @minLength 1 */
+  name: string;
+}
+
+export type AnalyticsDataStockOverTimeItem = {
+  date: string;
+  quantity: number;
+  label: string;
+};
+
+export type AnalyticsDataMovementTrendsItem = {
+  date: string;
+  IN: number;
+  OUT: number;
+  TRANSFER: number;
+};
+
+export type AnalyticsDataCategoryDistributionItem = {
+  name: string;
+  value: number;
+  totalValue?: number;
+};
+
+export type AnalyticsDataLocationStockItem = {
+  location: string;
+  quantity: number;
+  batches: number;
+};
+
+export interface AnalyticsData {
+  stockOverTime: AnalyticsDataStockOverTimeItem[];
+  movementTrends: AnalyticsDataMovementTrendsItem[];
+  categoryDistribution: AnalyticsDataCategoryDistributionItem[];
+  locationStock: AnalyticsDataLocationStockItem[];
+  totalInventoryValue: number;
+  riskValue: number;
+}
+
 export interface DashboardSummary {
   totalAssets: number;
   totalQuantity: number;
@@ -74,6 +195,8 @@ export interface DashboardSummary {
   lowStock: number;
   expired: number;
   fresh: number;
+  totalInventoryValue: number;
+  riskValue: number;
 }
 
 export interface AlertGroups {
@@ -87,3 +210,10 @@ export interface RecentActivity {
   seedName: string;
   batchNumber: string;
 }
+
+export type ListMovementsParams = {
+  assetId?: string;
+  movementType?: StockMovementType;
+  fromDate?: string;
+  toDate?: string;
+};

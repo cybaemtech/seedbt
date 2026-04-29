@@ -11,6 +11,8 @@ import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
 import AddAsset from "@/pages/AddAsset";
 import AssetDetail from "@/pages/AssetDetail";
+import Movements from "@/pages/Movements";
+import Analytics from "@/pages/Analytics";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +25,7 @@ const queryClient = new QueryClient({
 
 function Router() {
   const [location] = useLocation();
-  
+
   return (
     <AppLayout>
       <AnimatePresence mode="wait">
@@ -32,6 +34,8 @@ function Router() {
           <Route path="/inventory" component={Inventory} />
           <Route path="/inventory/new" component={AddAsset} />
           <Route path="/inventory/:id" component={AssetDetail} />
+          <Route path="/movements" component={Movements} />
+          <Route path="/analytics" component={Analytics} />
           <Route component={NotFound} />
         </Switch>
       </AnimatePresence>

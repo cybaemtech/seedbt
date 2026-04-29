@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * SeedTrack Pro API - Asset & Batch Management
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 import * as zod from "zod";
 
@@ -19,6 +19,11 @@ export const HealthCheckResponse = zod.object({
  */
 export const listAssetsResponseQuantityMin = 0;
 
+export const listAssetsResponseGerminationRateMin = 0;
+export const listAssetsResponseGerminationRateMax = 100;
+
+export const listAssetsResponsePricePerUnitMin = 0;
+
 export const ListAssetsResponseItem = zod.object({
   id: zod.string(),
   seedName: zod.string(),
@@ -28,6 +33,30 @@ export const ListAssetsResponseItem = zod.object({
   expiryDate: zod.coerce.date(),
   status: zod.enum(["Fresh", "Expiring", "Expired"]),
   createdAt: zod.coerce.date(),
+  productionDate: zod.coerce.date().optional(),
+  supplier: zod.string().optional(),
+  category: zod
+    .enum([
+      "Vegetable",
+      "Grain",
+      "Legume",
+      "Oilseed",
+      "Fiber",
+      "Spice",
+      "Fruit",
+      "Herb",
+      "Other",
+    ])
+    .optional(),
+  germinationRate: zod
+    .number()
+    .min(listAssetsResponseGerminationRateMin)
+    .max(listAssetsResponseGerminationRateMax)
+    .optional(),
+  pricePerUnit: zod.number().min(listAssetsResponsePricePerUnitMin).optional(),
+  totalValue: zod.number().optional(),
+  daysRemaining: zod.number().optional(),
+  expiryPriority: zod.enum(["SellImmediately", "Monitor", "Safe"]).optional(),
 });
 export const ListAssetsResponse = zod.array(ListAssetsResponseItem);
 
@@ -37,12 +66,38 @@ export const ListAssetsResponse = zod.array(ListAssetsResponseItem);
 
 export const createAssetBodyQuantityMin = 0;
 
+export const createAssetBodyGerminationRateMin = 0;
+export const createAssetBodyGerminationRateMax = 100;
+
+export const createAssetBodyPricePerUnitMin = 0;
+
 export const CreateAssetBody = zod.object({
   seedName: zod.string().min(1),
   batchNumber: zod.string().min(1),
   quantity: zod.number().min(createAssetBodyQuantityMin),
   location: zod.string().min(1),
   expiryDate: zod.coerce.date(),
+  productionDate: zod.coerce.date().optional(),
+  supplier: zod.string().optional(),
+  category: zod
+    .enum([
+      "Vegetable",
+      "Grain",
+      "Legume",
+      "Oilseed",
+      "Fiber",
+      "Spice",
+      "Fruit",
+      "Herb",
+      "Other",
+    ])
+    .optional(),
+  germinationRate: zod
+    .number()
+    .min(createAssetBodyGerminationRateMin)
+    .max(createAssetBodyGerminationRateMax)
+    .optional(),
+  pricePerUnit: zod.number().min(createAssetBodyPricePerUnitMin).optional(),
 });
 
 /**
@@ -54,6 +109,11 @@ export const GetAssetParams = zod.object({
 
 export const getAssetResponseQuantityMin = 0;
 
+export const getAssetResponseGerminationRateMin = 0;
+export const getAssetResponseGerminationRateMax = 100;
+
+export const getAssetResponsePricePerUnitMin = 0;
+
 export const GetAssetResponse = zod.object({
   id: zod.string(),
   seedName: zod.string(),
@@ -63,6 +123,30 @@ export const GetAssetResponse = zod.object({
   expiryDate: zod.coerce.date(),
   status: zod.enum(["Fresh", "Expiring", "Expired"]),
   createdAt: zod.coerce.date(),
+  productionDate: zod.coerce.date().optional(),
+  supplier: zod.string().optional(),
+  category: zod
+    .enum([
+      "Vegetable",
+      "Grain",
+      "Legume",
+      "Oilseed",
+      "Fiber",
+      "Spice",
+      "Fruit",
+      "Herb",
+      "Other",
+    ])
+    .optional(),
+  germinationRate: zod
+    .number()
+    .min(getAssetResponseGerminationRateMin)
+    .max(getAssetResponseGerminationRateMax)
+    .optional(),
+  pricePerUnit: zod.number().min(getAssetResponsePricePerUnitMin).optional(),
+  totalValue: zod.number().optional(),
+  daysRemaining: zod.number().optional(),
+  expiryPriority: zod.enum(["SellImmediately", "Monitor", "Safe"]).optional(),
 });
 
 /**
@@ -74,15 +158,46 @@ export const UpdateAssetParams = zod.object({
 
 export const updateAssetBodyQuantityMin = 0;
 
+export const updateAssetBodyGerminationRateMin = 0;
+export const updateAssetBodyGerminationRateMax = 100;
+
+export const updateAssetBodyPricePerUnitMin = 0;
+
 export const UpdateAssetBody = zod.object({
   seedName: zod.string().min(1),
   batchNumber: zod.string().min(1),
   quantity: zod.number().min(updateAssetBodyQuantityMin),
   location: zod.string().min(1),
   expiryDate: zod.coerce.date(),
+  productionDate: zod.coerce.date().optional(),
+  supplier: zod.string().optional(),
+  category: zod
+    .enum([
+      "Vegetable",
+      "Grain",
+      "Legume",
+      "Oilseed",
+      "Fiber",
+      "Spice",
+      "Fruit",
+      "Herb",
+      "Other",
+    ])
+    .optional(),
+  germinationRate: zod
+    .number()
+    .min(updateAssetBodyGerminationRateMin)
+    .max(updateAssetBodyGerminationRateMax)
+    .optional(),
+  pricePerUnit: zod.number().min(updateAssetBodyPricePerUnitMin).optional(),
 });
 
 export const updateAssetResponseQuantityMin = 0;
+
+export const updateAssetResponseGerminationRateMin = 0;
+export const updateAssetResponseGerminationRateMax = 100;
+
+export const updateAssetResponsePricePerUnitMin = 0;
 
 export const UpdateAssetResponse = zod.object({
   id: zod.string(),
@@ -93,6 +208,30 @@ export const UpdateAssetResponse = zod.object({
   expiryDate: zod.coerce.date(),
   status: zod.enum(["Fresh", "Expiring", "Expired"]),
   createdAt: zod.coerce.date(),
+  productionDate: zod.coerce.date().optional(),
+  supplier: zod.string().optional(),
+  category: zod
+    .enum([
+      "Vegetable",
+      "Grain",
+      "Legume",
+      "Oilseed",
+      "Fiber",
+      "Spice",
+      "Fruit",
+      "Herb",
+      "Other",
+    ])
+    .optional(),
+  germinationRate: zod
+    .number()
+    .min(updateAssetResponseGerminationRateMin)
+    .max(updateAssetResponseGerminationRateMax)
+    .optional(),
+  pricePerUnit: zod.number().min(updateAssetResponsePricePerUnitMin).optional(),
+  totalValue: zod.number().optional(),
+  daysRemaining: zod.number().optional(),
+  expiryPriority: zod.enum(["SellImmediately", "Monitor", "Safe"]).optional(),
 });
 
 /**
@@ -142,6 +281,8 @@ export const GetDashboardSummaryResponse = zod.object({
   lowStock: zod.number(),
   expired: zod.number(),
   fresh: zod.number(),
+  totalInventoryValue: zod.number(),
+  riskValue: zod.number(),
 });
 
 /**
@@ -149,9 +290,24 @@ export const GetDashboardSummaryResponse = zod.object({
  */
 export const getAlertsResponseExpiringSoonItemQuantityMin = 0;
 
+export const getAlertsResponseExpiringSoonItemGerminationRateMin = 0;
+export const getAlertsResponseExpiringSoonItemGerminationRateMax = 100;
+
+export const getAlertsResponseExpiringSoonItemPricePerUnitMin = 0;
+
 export const getAlertsResponseExpiredItemQuantityMin = 0;
 
+export const getAlertsResponseExpiredItemGerminationRateMin = 0;
+export const getAlertsResponseExpiredItemGerminationRateMax = 100;
+
+export const getAlertsResponseExpiredItemPricePerUnitMin = 0;
+
 export const getAlertsResponseLowStockItemQuantityMin = 0;
+
+export const getAlertsResponseLowStockItemGerminationRateMin = 0;
+export const getAlertsResponseLowStockItemGerminationRateMax = 100;
+
+export const getAlertsResponseLowStockItemPricePerUnitMin = 0;
 
 export const GetAlertsResponse = zod.object({
   expiringSoon: zod.array(
@@ -164,6 +320,35 @@ export const GetAlertsResponse = zod.object({
       expiryDate: zod.coerce.date(),
       status: zod.enum(["Fresh", "Expiring", "Expired"]),
       createdAt: zod.coerce.date(),
+      productionDate: zod.coerce.date().optional(),
+      supplier: zod.string().optional(),
+      category: zod
+        .enum([
+          "Vegetable",
+          "Grain",
+          "Legume",
+          "Oilseed",
+          "Fiber",
+          "Spice",
+          "Fruit",
+          "Herb",
+          "Other",
+        ])
+        .optional(),
+      germinationRate: zod
+        .number()
+        .min(getAlertsResponseExpiringSoonItemGerminationRateMin)
+        .max(getAlertsResponseExpiringSoonItemGerminationRateMax)
+        .optional(),
+      pricePerUnit: zod
+        .number()
+        .min(getAlertsResponseExpiringSoonItemPricePerUnitMin)
+        .optional(),
+      totalValue: zod.number().optional(),
+      daysRemaining: zod.number().optional(),
+      expiryPriority: zod
+        .enum(["SellImmediately", "Monitor", "Safe"])
+        .optional(),
     }),
   ),
   expired: zod.array(
@@ -176,6 +361,35 @@ export const GetAlertsResponse = zod.object({
       expiryDate: zod.coerce.date(),
       status: zod.enum(["Fresh", "Expiring", "Expired"]),
       createdAt: zod.coerce.date(),
+      productionDate: zod.coerce.date().optional(),
+      supplier: zod.string().optional(),
+      category: zod
+        .enum([
+          "Vegetable",
+          "Grain",
+          "Legume",
+          "Oilseed",
+          "Fiber",
+          "Spice",
+          "Fruit",
+          "Herb",
+          "Other",
+        ])
+        .optional(),
+      germinationRate: zod
+        .number()
+        .min(getAlertsResponseExpiredItemGerminationRateMin)
+        .max(getAlertsResponseExpiredItemGerminationRateMax)
+        .optional(),
+      pricePerUnit: zod
+        .number()
+        .min(getAlertsResponseExpiredItemPricePerUnitMin)
+        .optional(),
+      totalValue: zod.number().optional(),
+      daysRemaining: zod.number().optional(),
+      expiryPriority: zod
+        .enum(["SellImmediately", "Monitor", "Safe"])
+        .optional(),
     }),
   ),
   lowStock: zod.array(
@@ -188,6 +402,35 @@ export const GetAlertsResponse = zod.object({
       expiryDate: zod.coerce.date(),
       status: zod.enum(["Fresh", "Expiring", "Expired"]),
       createdAt: zod.coerce.date(),
+      productionDate: zod.coerce.date().optional(),
+      supplier: zod.string().optional(),
+      category: zod
+        .enum([
+          "Vegetable",
+          "Grain",
+          "Legume",
+          "Oilseed",
+          "Fiber",
+          "Spice",
+          "Fruit",
+          "Herb",
+          "Other",
+        ])
+        .optional(),
+      germinationRate: zod
+        .number()
+        .min(getAlertsResponseLowStockItemGerminationRateMin)
+        .max(getAlertsResponseLowStockItemGerminationRateMax)
+        .optional(),
+      pricePerUnit: zod
+        .number()
+        .min(getAlertsResponseLowStockItemPricePerUnitMin)
+        .optional(),
+      totalValue: zod.number().optional(),
+      daysRemaining: zod.number().optional(),
+      expiryPriority: zod
+        .enum(["SellImmediately", "Monitor", "Safe"])
+        .optional(),
     }),
   ),
 });
@@ -210,3 +453,100 @@ export const GetRecentActivityResponseItem = zod.object({
 export const GetRecentActivityResponse = zod.array(
   GetRecentActivityResponseItem,
 );
+
+/**
+ * @summary List all stock movements
+ */
+export const ListMovementsQueryParams = zod.object({
+  assetId: zod.coerce.string().optional(),
+  movementType: zod.enum(["IN", "OUT", "TRANSFER"]).optional(),
+  fromDate: zod.date().optional(),
+  toDate: zod.date().optional(),
+});
+
+export const ListMovementsResponseItem = zod.object({
+  id: zod.string(),
+  assetId: zod.string(),
+  seedName: zod.string(),
+  batchNumber: zod.string(),
+  movementType: zod.enum(["IN", "OUT", "TRANSFER"]),
+  quantity: zod.number().min(1),
+  fromLocation: zod.string().optional(),
+  toLocation: zod.string().optional(),
+  date: zod.coerce.date(),
+  notes: zod.string().optional(),
+  createdAt: zod.coerce.date(),
+});
+export const ListMovementsResponse = zod.array(ListMovementsResponseItem);
+
+/**
+ * @summary Create a stock movement
+ */
+
+export const CreateMovementBody = zod.object({
+  assetId: zod.string().min(1),
+  movementType: zod.enum(["IN", "OUT", "TRANSFER"]),
+  quantity: zod.number().min(1),
+  fromLocation: zod.string().optional(),
+  toLocation: zod.string().optional(),
+  date: zod.coerce.date(),
+  notes: zod.string().optional(),
+});
+
+/**
+ * @summary List all locations
+ */
+export const ListLocationsResponseItem = zod.string();
+export const ListLocationsResponse = zod.array(ListLocationsResponseItem);
+
+/**
+ * @summary Add a new location
+ */
+
+export const AddLocationBody = zod.object({
+  name: zod.string().min(1),
+});
+
+/**
+ * @summary Delete a location
+ */
+export const DeleteLocationParams = zod.object({
+  name: zod.coerce.string(),
+});
+
+/**
+ * @summary Get analytics data
+ */
+export const GetAnalyticsResponse = zod.object({
+  stockOverTime: zod.array(
+    zod.object({
+      date: zod.string(),
+      quantity: zod.number(),
+      label: zod.string(),
+    }),
+  ),
+  movementTrends: zod.array(
+    zod.object({
+      date: zod.string(),
+      IN: zod.number(),
+      OUT: zod.number(),
+      TRANSFER: zod.number(),
+    }),
+  ),
+  categoryDistribution: zod.array(
+    zod.object({
+      name: zod.string(),
+      value: zod.number(),
+      totalValue: zod.number().optional(),
+    }),
+  ),
+  locationStock: zod.array(
+    zod.object({
+      location: zod.string(),
+      quantity: zod.number(),
+      batches: zod.number(),
+    }),
+  ),
+  totalInventoryValue: zod.number(),
+  riskValue: zod.number(),
+});

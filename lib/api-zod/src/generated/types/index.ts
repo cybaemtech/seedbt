@@ -3,16 +3,28 @@
  * Do not edit manually.
  * Api
  * SeedTrack Pro API - Asset & Batch Management
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 
 export * from "./alertGroups";
+export * from "./analyticsData";
+export * from "./analyticsDataCategoryDistributionItem";
+export * from "./analyticsDataLocationStockItem";
+export * from "./analyticsDataMovementTrendsItem";
+export * from "./analyticsDataStockOverTimeItem";
 export * from "./asset";
 export * from "./assetInput";
 export * from "./assetStatus";
 export * from "./dashboardSummary";
+export * from "./expiryPriority";
 export * from "./healthStatus";
+export * from "./listMovementsParams";
+export * from "./locationInput";
 export * from "./movementEvent";
 export * from "./movementEventInput";
 export * from "./movementEventType";
 export * from "./recentActivity";
+export * from "./seedCategory";
+export * from "./stockMovement";
+export * from "./stockMovementInput";
+export * from "./stockMovementType";

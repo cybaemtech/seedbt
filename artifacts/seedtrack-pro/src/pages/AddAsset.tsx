@@ -12,20 +12,25 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+
+const SEED_CATEGORIES = ["Vegetable", "Grain", "Legume", "Oilseed", "Fiber", "Spice", "Fruit", "Herb", "Other"] as const;
 
 const assetSchema = z.object({
   seedName: z.string().min(1, "Seed name is required"),
   batchNumber: z.string().min(1, "Batch number is required"),
   quantity: z.coerce.number().min(0, "Quantity must be positive"),
   location: z.string().min(1, "Location is required"),
-  expiryDate: z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date"),
+  expiryDate: z.string().refine((v) => !isNaN(Date.parse(v)), "Invalid date"),
+  productionDate: z.string().optional(),
+  supplier: z.string().optional(),
+  category: z.enum(SEED_CATEGORIES).optional(),
+  germinationRate: z.coerce.number().min(0).max(100).optional().or(z.literal("")),
+  pricePerUnit: z.coerce.number().min(0).optional().or(z.literal("")),
 });
 
 type AssetFormValues = z.infer<typeof assetSchema>;
@@ -43,17 +48,30 @@ export default function AddAsset() {
       quantity: 0,
       location: "",
       expiryDate: new Date().toISOString().split("T")[0],
+      productionDate: "",
+      supplier: "",
+      category: undefined,
+      germinationRate: "",
+      pricePerUnit: "",
     },
   });
 
   function onSubmit(data: AssetFormValues) {
+    const payload: Record<string, unknown> = {
+      seedName: data.seedName,
+      batchNumber: data.batchNumber,
+      quantity: data.quantity,
+      location: data.location,
+      expiryDate: new Date(data.expiryDate).toISOString(),
+    };
+    if (data.productionDate) payload.productionDate = new Date(data.productionDate).toISOString();
+    if (data.supplier) payload.supplier = data.supplier;
+    if (data.category) payload.category = data.category;
+    if (data.germinationRate !== "" && data.germinationRate != null) payload.germinationRate = Number(data.germinationRate);
+    if (data.pricePerUnit !== "" && data.pricePerUnit != null) payload.pricePerUnit = Number(data.pricePerUnit);
+
     createAsset.mutate(
-      {
-        data: {
-          ...data,
-          expiryDate: new Date(data.expiryDate).toISOString(),
-        }
-      },
+      { data: payload as any },
       {
         onSuccess: (asset) => {
           queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
@@ -61,15 +79,13 @@ export default function AddAsset() {
           toast.success("Batch registered successfully");
           setLocation(`/inventory/${asset.id}`);
         },
-        onError: () => {
-          toast.error("Failed to create asset");
-        },
-      }
+        onError: () => toast.error("Failed to create asset"),
+      },
     );
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
@@ -84,98 +100,124 @@ export default function AddAsset() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 relative">
-          
-          <div className="space-y-8 bg-card border border-border/60 rounded-2xl p-8 shadow-sm">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+          {/* Batch Identity */}
+          <div className="space-y-6 bg-card border border-border/60 rounded-2xl p-8 shadow-sm">
             <div>
-              <h3 className="text-lg font-bold tracking-tight text-foreground">Batch Identity</h3>
-              <p className="text-[14px] text-muted-foreground mt-1.5">Primary details for this seed batch.</p>
+              <h3 className="text-lg font-bold tracking-tight">Batch Identity</h3>
+              <p className="text-[14px] text-muted-foreground mt-1.5">Primary identification details.</p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <FormField
-                control={form.control}
-                name="seedName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Seed Name</FormLabel>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField control={form.control} name="seedName" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Seed Name *</FormLabel>
+                  <FormControl><Input placeholder="e.g. Hybrid Chilli KS-401" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="batchNumber" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Batch Number *</FormLabel>
+                  <FormControl><Input placeholder="e.g. CHL-2026-A12" className="h-11 rounded-xl bg-muted/40 border-border/50 font-mono" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="supplier" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Supplier</FormLabel>
+                  <FormControl><Input placeholder="e.g. Kaveri Seeds Ltd" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="category" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Category</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
-                      <Input placeholder="e.g. Hybrid Chilli KS-401" className="h-11 rounded-xl bg-muted/40 border-border/50 focus-visible:ring-primary/30" {...field} />
+                      <SelectTrigger className="h-11 rounded-xl bg-muted/40 border-border/50">
+                        <SelectValue placeholder="Select category..." />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="batchNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Batch Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. BATCH-2023-01" className="h-11 rounded-xl bg-muted/40 border-border/50 focus-visible:ring-primary/30 font-mono font-medium" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}
-              />
+                    <SelectContent className="rounded-xl">
+                      {SEED_CATEGORIES.map((c) => (
+                        <SelectItem key={c} value={c} className="rounded-lg">{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
             </div>
           </div>
 
-          <div className="space-y-8 bg-card border border-border/60 rounded-2xl p-8 shadow-sm">
+          {/* Status & Location */}
+          <div className="space-y-6 bg-card border border-border/60 rounded-2xl p-8 shadow-sm">
             <div>
-              <h3 className="text-lg font-bold tracking-tight text-foreground">Status & Location</h3>
-              <p className="text-[14px] text-muted-foreground mt-1.5">Initial quantity, storage, and validity.</p>
+              <h3 className="text-lg font-bold tracking-tight">Status & Location</h3>
+              <p className="text-[14px] text-muted-foreground mt-1.5">Quantity, storage, and validity dates.</p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <FormField
-                control={form.control}
-                name="quantity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Quantity</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="0" className="h-11 rounded-xl bg-muted/40 border-border/50 focus-visible:ring-primary/30" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Initial Location</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. Warehouse A, Aisle 3" className="h-11 rounded-xl bg-muted/40 border-border/50 focus-visible:ring-primary/30" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="expiryDate"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Expiry Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" className="h-11 rounded-xl bg-muted/40 border-border/50 focus-visible:ring-primary/30" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField control={form.control} name="quantity" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Quantity *</FormLabel>
+                  <FormControl><Input type="number" placeholder="0" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="location" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Initial Location *</FormLabel>
+                  <FormControl><Input placeholder="e.g. Warehouse A" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="productionDate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Production Date</FormLabel>
+                  <FormControl><Input type="date" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="expiryDate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Expiry Date *</FormLabel>
+                  <FormControl><Input type="date" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
             </div>
           </div>
 
-          <div className="fixed bottom-0 right-0 left-0 md:left-[260px] p-5 bg-background/80 backdrop-blur-xl border-t border-border/60 flex justify-end gap-4 z-10 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+          {/* Quality & Pricing */}
+          <div className="space-y-6 bg-card border border-border/60 rounded-2xl p-8 shadow-sm">
+            <div>
+              <h3 className="text-lg font-bold tracking-tight">Quality & Pricing</h3>
+              <p className="text-[14px] text-muted-foreground mt-1.5">Germination rate and unit pricing for value tracking.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField control={form.control} name="germinationRate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Germination Rate (%)</FormLabel>
+                  <FormControl><Input type="number" min={0} max={100} placeholder="e.g. 92" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+              <FormField control={form.control} name="pricePerUnit" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[13px] font-semibold text-foreground/80">Price Per Unit ($)</FormLabel>
+                  <FormControl><Input type="number" min={0} step={0.01} placeholder="e.g. 18.50" className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} /></FormControl>
+                  <FormMessage className="text-[12px]" />
+                </FormItem>
+              )}/>
+            </div>
+          </div>
+
+          <div className="fixed bottom-0 right-0 left-0 md:left-[260px] p-5 bg-background/80 backdrop-blur-xl border-t border-border/60 flex justify-end gap-4 z-10 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
             <Link href="/inventory">
-              <Button variant="outline" type="button" className="h-11 px-6 rounded-xl font-semibold shadow-sm border-border/60 active:scale-[0.97]">Cancel</Button>
+              <Button variant="outline" type="button" className="h-11 px-6 rounded-xl font-semibold border-border/60">Cancel</Button>
             </Link>
-            <Button type="submit" disabled={createAsset.isPending} className="h-11 px-8 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all active:scale-[0.97]">
+            <Button type="submit" disabled={createAsset.isPending} className="h-11 px-8 rounded-xl font-semibold shadow-md hover:shadow-lg">
               {createAsset.isPending ? "Registering..." : "Register Batch"}
             </Button>
           </div>

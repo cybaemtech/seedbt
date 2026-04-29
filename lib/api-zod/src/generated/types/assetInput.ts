@@ -3,8 +3,9 @@
  * Do not edit manually.
  * Api
  * SeedTrack Pro API - Asset & Batch Management
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
+import type { SeedCategory } from "./seedCategory";
 
 export interface AssetInput {
   /** @minLength 1 */
@@ -16,4 +17,14 @@ export interface AssetInput {
   /** @minLength 1 */
   location: string;
   expiryDate: Date;
+  productionDate?: Date;
+  supplier?: string;
+  category?: SeedCategory;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  germinationRate?: number;
+  /** @minimum 0 */
+  pricePerUnit?: number;
 }

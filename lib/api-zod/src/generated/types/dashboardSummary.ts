@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * SeedTrack Pro API - Asset & Batch Management
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 
 export interface DashboardSummary {
@@ -13,4 +13,6 @@ export interface DashboardSummary {
   lowStock: number;
   expired: number;
   fresh: number;
+  totalInventoryValue: number;
+  riskValue: number;
 }

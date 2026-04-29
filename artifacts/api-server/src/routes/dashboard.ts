@@ -17,6 +17,14 @@ router.get("/dashboard/summary", async (_req, res) => {
   const fresh = assets.filter((a) => a.status === "Fresh").length;
   const lowStock = assets.filter((a) => a.quantity < LOW_STOCK_THRESHOLD).length;
 
+  const totalInventoryValue = assets.reduce((sum, a) => {
+    return sum + a.quantity * (a.pricePerUnit ?? 0);
+  }, 0);
+
+  const riskValue = assets
+    .filter((a) => a.status === "Expiring" || a.status === "Expired")
+    .reduce((sum, a) => sum + a.quantity * (a.pricePerUnit ?? 0), 0);
+
   res.json({
     totalAssets,
     totalQuantity,
@@ -24,6 +32,8 @@ router.get("/dashboard/summary", async (_req, res) => {
     lowStock,
     expired,
     fresh,
+    totalInventoryValue,
+    riskValue,
   });
 });
 
@@ -57,7 +67,6 @@ router.get("/dashboard/recent-activity", async (_req, res) => {
   res.json(enriched);
 });
 
-// Mark constants as referenced (linter satisfaction; values may also be useful for clients later)
 void EXPIRING_WINDOW_DAYS;
 
 export default router;

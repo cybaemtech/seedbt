@@ -1,40 +1,31 @@
 import { useGetDashboardSummary, useGetAlerts, useGetRecentActivity } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, AlertTriangle, AlertCircle, CheckCircle, Clock, PlusCircle, ArrowRight, TrendingUp, Sparkles, Activity } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Package, AlertTriangle, AlertCircle, CheckCircle,
+  PlusCircle, ArrowRight, TrendingUp, Sparkles, Activity,
+  DollarSign, ShieldAlert,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "wouter";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 
-// Helper to synthesize sparkline data
-const generateTrendData = (baseValue: number, volatility: number = 0.2) => {
-  return Array.from({ length: 14 }).map((_, i) => ({
-    value: baseValue + (Math.sin(i) * baseValue * volatility) + (i * baseValue * 0.05)
+const generateTrendData = (baseValue: number, volatility = 0.2) =>
+  Array.from({ length: 14 }).map((_, i) => ({
+    value: baseValue + Math.sin(i) * baseValue * volatility + i * baseValue * 0.05,
   }));
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    transition: { duration: 0.2 }
-  }
+  show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
 };
-
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
+  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
 };
 
 export default function Dashboard() {
@@ -59,7 +50,7 @@ export default function Dashboard() {
   const totalTrend = summary ? generateTrendData(summary.totalAssets, 0.1) : [];
 
   return (
-    <motion.div 
+    <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -71,6 +62,7 @@ export default function Dashboard() {
         <p className="text-base text-muted-foreground mt-2">Monitor your seed inventory health and operations.</p>
       </motion.div>
 
+      {/* KPI Cards Row 1 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <motion.div variants={itemVariants}>
           <Card className="shadow-md shadow-black/5 dark:shadow-white/5 border-border/60 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden group bg-gradient-to-br from-card to-card/50">
@@ -92,8 +84,8 @@ export default function Dashboard() {
                 <div className="h-8 w-20 opacity-40 group-hover:opacity-100 transition-opacity duration-300">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={totalTrend}>
-                      <YAxis domain={['dataMin', 'dataMax']} hide />
-                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={false} isAnimationActive={true} />
+                      <YAxis domain={["dataMin", "dataMax"]} hide />
+                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -117,7 +109,9 @@ export default function Dashboard() {
               </div>
               <div className="mt-5 flex items-center justify-between text-sm text-muted-foreground font-medium">
                 <span>Healthy batches ready to ship</span>
-                <span className="font-mono text-primary font-bold bg-primary/10 px-2 py-0.5 rounded-md">{(summary?.fresh ?? 0) > 0 ? Math.round(((summary?.fresh ?? 0)/(summary?.totalAssets || 1))*100) : 0}%</span>
+                <span className="font-mono text-primary font-bold bg-primary/10 px-2 py-0.5 rounded-md">
+                  {(summary?.fresh ?? 0) > 0 ? Math.round(((summary?.fresh ?? 0) / (summary?.totalAssets || 1)) * 100) : 0}%
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -125,7 +119,7 @@ export default function Dashboard() {
 
         <motion.div variants={itemVariants}>
           <Card className="shadow-md shadow-black/5 dark:shadow-white/5 border-border/60 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden group relative">
-             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <CardContent className="p-6 relative">
               <div className="flex justify-between items-start">
                 <div className="space-y-1.5">
@@ -136,7 +130,7 @@ export default function Dashboard() {
                   <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-500" />
                 </div>
               </div>
-              <div className="mt-5 flex items-center justify-between text-sm text-muted-foreground font-medium">
+              <div className="mt-5 text-sm text-muted-foreground font-medium">
                 <span>Within next 30 days</span>
               </div>
             </CardContent>
@@ -145,7 +139,7 @@ export default function Dashboard() {
 
         <motion.div variants={itemVariants}>
           <Card className="shadow-md shadow-black/5 dark:shadow-white/5 border-border/60 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden group relative">
-             <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <CardContent className="p-6 relative">
               <div className="flex justify-between items-start">
                 <div className="space-y-1.5">
@@ -156,8 +150,55 @@ export default function Dashboard() {
                   <AlertCircle className="h-5 w-5 text-destructive" />
                 </div>
               </div>
-              <div className="mt-5 flex items-center justify-between text-sm text-muted-foreground font-medium">
+              <div className="mt-5 text-sm text-muted-foreground font-medium">
                 <span>Requires immediate review</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Financial KPIs Row 2 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div variants={itemVariants}>
+          <Card className="shadow-md shadow-black/5 dark:shadow-white/5 border-border/60 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden group relative bg-gradient-to-br from-primary/5 to-transparent">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1.5">
+                  <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">Total Inventory Value</p>
+                  <p className="text-3xl font-bold tracking-tight">
+                    ${(summary?.totalInventoryValue ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+              </div>
+              <div className="mt-5 text-sm text-muted-foreground font-medium">
+                Based on price per unit across all batches
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <Card className="shadow-md shadow-black/5 dark:shadow-white/5 border-border/60 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden group relative bg-gradient-to-br from-destructive/5 to-transparent">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1.5">
+                  <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">Value at Risk</p>
+                  <p className="text-3xl font-bold tracking-tight text-destructive">
+                    ${(summary?.riskValue ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <ShieldAlert className="h-5 w-5 text-destructive" />
+                </div>
+              </div>
+              <div className="mt-5 text-sm text-muted-foreground font-medium">
+                {(summary?.totalInventoryValue ?? 0) > 0
+                  ? `${(((summary?.riskValue ?? 0) / (summary?.totalInventoryValue ?? 1)) * 100).toFixed(1)}% of total value in expiring/expired stock`
+                  : "Value from expiring & expired batches"}
               </div>
             </CardContent>
           </Card>
@@ -171,21 +212,21 @@ export default function Dashboard() {
           <h2 className="text-xl font-bold tracking-tight">Recent Activity</h2>
           <Card className="shadow-md shadow-black/5 dark:shadow-white/5 border-border/60 rounded-2xl overflow-hidden bg-card">
             <CardContent className="p-0">
-              {recentActivity && recentActivity.length > 0 ? (
+              {recentActivity.length > 0 ? (
                 <div className="relative border-l-[3px] border-muted ml-8 my-8 space-y-8">
                   {recentActivity.map((activity, i) => (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.1 + 0.3, type: "spring" as const, stiffness: 300, damping: 24 }}
-                      key={i} 
+                      key={i}
                       className="relative pl-8 pr-6 group"
                     >
                       <div className="absolute -left-[1.3rem] top-1.5 h-6 w-6 rounded-full border-4 border-card bg-muted flex items-center justify-center shadow-sm group-hover:scale-125 transition-transform duration-300">
-                        {activity.event.type === 'Created' && <PlusCircle className="h-3 w-3 text-primary" />}
-                        {activity.event.type === 'Stored' && <Package className="h-3 w-3 text-blue-500" />}
-                        {activity.event.type === 'Dispatched' && <ArrowRight className="h-3 w-3 text-amber-500" />}
-                        {activity.event.type === 'Delivered' && <CheckCircle className="h-3 w-3 text-green-500" />}
+                        {activity.event.type === "Created" && <PlusCircle className="h-3 w-3 text-primary" />}
+                        {activity.event.type === "Stored" && <Package className="h-3 w-3 text-blue-500" />}
+                        {activity.event.type === "Dispatched" && <ArrowRight className="h-3 w-3 text-amber-500" />}
+                        {activity.event.type === "Delivered" && <CheckCircle className="h-3 w-3 text-green-500" />}
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 p-4 rounded-xl hover:bg-muted/50 transition-colors -mt-3 border border-transparent hover:border-border/50">
                         <div className="space-y-1.5">
@@ -230,7 +271,7 @@ export default function Dashboard() {
             <Tabs defaultValue="expiring" className="w-full">
               <div className="px-5 pt-5 pb-2 border-b border-border/60">
                 <TabsList className="grid w-full grid-cols-3 bg-muted/60 h-11 p-1 rounded-xl">
-                  <TabsTrigger value="expiring" className="text-[13px] font-semibold relative rounded-lg data-[state=active]:shadow-sm">
+                  <TabsTrigger value="expiring" className="text-[13px] font-semibold rounded-lg data-[state=active]:shadow-sm">
                     Expiring
                     {(alerts?.expiringSoon?.length ?? 0) > 0 && (
                       <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-[11px] font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
@@ -238,7 +279,7 @@ export default function Dashboard() {
                       </span>
                     )}
                   </TabsTrigger>
-                  <TabsTrigger value="expired" className="text-[13px] font-semibold relative rounded-lg data-[state=active]:shadow-sm">
+                  <TabsTrigger value="expired" className="text-[13px] font-semibold rounded-lg data-[state=active]:shadow-sm">
                     Expired
                     {(alerts?.expired?.length ?? 0) > 0 && (
                       <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-destructive/10 text-[11px] font-bold text-destructive">
@@ -246,7 +287,7 @@ export default function Dashboard() {
                       </span>
                     )}
                   </TabsTrigger>
-                  <TabsTrigger value="lowstock" className="text-[13px] font-semibold relative rounded-lg data-[state=active]:shadow-sm">
+                  <TabsTrigger value="lowstock" className="text-[13px] font-semibold rounded-lg data-[state=active]:shadow-sm">
                     Low Stock
                     {(alerts?.lowStock?.length ?? 0) > 0 && (
                       <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground/10 text-[11px] font-bold text-muted-foreground">
@@ -258,86 +299,47 @@ export default function Dashboard() {
               </div>
 
               <div className="p-0 min-h-[350px]">
-                <TabsContent value="expiring" className="m-0 focus-visible:outline-none">
-                  {alerts?.expiringSoon && alerts.expiringSoon.length > 0 ? (
-                    <div className="divide-y divide-border/60">
-                      {alerts.expiringSoon.slice(0, 5).map(asset => (
-                        <Link key={asset.id} href={`/inventory/${asset.id}`}>
-                          <div className="p-5 flex flex-col gap-1.5 hover:bg-muted/40 transition-colors cursor-pointer group">
-                            <div className="flex justify-between items-start">
-                              <span className="text-[15px] font-semibold text-foreground group-hover:text-primary transition-colors">{asset.seedName}</span>
-                              <span className="text-[11px] font-bold text-amber-600 dark:text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-md uppercase tracking-wide">
-                                {format(new Date(asset.expiryDate), "MMM d")}
-                              </span>
-                            </div>
-                            <div className="text-[13px] text-muted-foreground font-mono font-medium">{asset.batchNumber}</div>
+                {(["expiring", "expired", "lowstock"] as const).map((tab) => {
+                  const list = tab === "expiring" ? alerts?.expiringSoon : tab === "expired" ? alerts?.expired : alerts?.lowStock;
+                  return (
+                    <TabsContent key={tab} value={tab} className="m-0 focus-visible:outline-none">
+                      {list && list.length > 0 ? (
+                        <div className="divide-y divide-border/60">
+                          {list.slice(0, 5).map((asset) => (
+                            <Link key={asset.id} href={`/inventory/${asset.id}`}>
+                              <div className="p-5 flex flex-col gap-1.5 hover:bg-muted/40 transition-colors cursor-pointer group">
+                                <div className="flex justify-between items-start">
+                                  <span className="text-[15px] font-semibold text-foreground group-hover:text-primary transition-colors">{asset.seedName}</span>
+                                  {tab === "lowstock" ? (
+                                    <span className="text-[11px] font-bold font-mono text-muted-foreground bg-muted px-2.5 py-1 rounded-md uppercase tracking-wide">
+                                      {asset.quantity} left
+                                    </span>
+                                  ) : tab === "expired" ? (
+                                    <span className="text-[11px] font-bold text-destructive bg-destructive/10 px-2.5 py-1 rounded-md uppercase tracking-wide">
+                                      Expired
+                                    </span>
+                                  ) : (
+                                    <span className="text-[11px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-md uppercase tracking-wide">
+                                      {format(new Date(asset.expiryDate), "MMM d")}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-[13px] text-muted-foreground font-mono font-medium">{asset.batchNumber}</div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-20 text-center">
+                          <div className="h-16 w-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4">
+                            <CheckCircle className="h-8 w-8 text-primary/50" />
                           </div>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                      <div className="h-16 w-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4">
-                         <CheckCircle className="h-8 w-8 text-primary/50" />
-                      </div>
-                      <p className="text-base font-semibold text-foreground">No expiring batches</p>
-                    </div>
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="expired" className="m-0 focus-visible:outline-none">
-                  {alerts?.expired && alerts.expired.length > 0 ? (
-                    <div className="divide-y divide-border/60">
-                      {alerts.expired.slice(0, 5).map(asset => (
-                        <Link key={asset.id} href={`/inventory/${asset.id}`}>
-                          <div className="p-5 flex flex-col gap-1.5 hover:bg-muted/40 transition-colors cursor-pointer group">
-                            <div className="flex justify-between items-start">
-                              <span className="text-[15px] font-semibold text-foreground group-hover:text-primary transition-colors">{asset.seedName}</span>
-                              <span className="text-[11px] font-bold text-destructive bg-destructive/10 px-2.5 py-1 rounded-md uppercase tracking-wide">
-                                Expired
-                              </span>
-                            </div>
-                            <div className="text-[13px] text-muted-foreground font-mono font-medium">{asset.batchNumber}</div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                      <div className="h-16 w-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4">
-                         <CheckCircle className="h-8 w-8 text-primary/50" />
-                      </div>
-                      <p className="text-base font-semibold text-foreground">No expired batches.</p>
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="lowstock" className="m-0 focus-visible:outline-none">
-                  {alerts?.lowStock && alerts.lowStock.length > 0 ? (
-                    <div className="divide-y divide-border/60">
-                      {alerts.lowStock.slice(0, 5).map(asset => (
-                        <Link key={asset.id} href={`/inventory/${asset.id}`}>
-                          <div className="p-5 flex flex-col gap-1.5 hover:bg-muted/40 transition-colors cursor-pointer group">
-                            <div className="flex justify-between items-start">
-                              <span className="text-[15px] font-semibold text-foreground group-hover:text-primary transition-colors">{asset.seedName}</span>
-                              <span className="text-[11px] font-bold font-mono text-muted-foreground bg-muted px-2.5 py-1 rounded-md uppercase tracking-wide">
-                                {asset.quantity} left
-                              </span>
-                            </div>
-                            <div className="text-[13px] text-muted-foreground font-mono font-medium">{asset.batchNumber}</div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                      <div className="h-16 w-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4">
-                         <CheckCircle className="h-8 w-8 text-primary/50" />
-                      </div>
-                      <p className="text-base font-semibold text-foreground">Stock levels look good.</p>
-                    </div>
-                  )}
-                </TabsContent>
+                          <p className="text-base font-semibold text-foreground">All good here!</p>
+                        </div>
+                      )}
+                    </TabsContent>
+                  );
+                })}
               </div>
             </Tabs>
           </Card>

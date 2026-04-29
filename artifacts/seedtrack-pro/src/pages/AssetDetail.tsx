@@ -1,578 +1,399 @@
-import { useRoute } from "wouter";
-import { 
-  useGetAsset, 
-  getGetAssetQueryKey, 
-  useUpdateAsset, 
-  useDeleteAsset,
-  useListAssetHistory,
-  useCreateAssetHistory,
-  getListAssetsQueryKey,
-  getListAssetHistoryQueryKey,
-  getGetDashboardSummaryQueryKey
+import { useState } from "react";
+import {
+  useGetAsset, useUpdateAsset, useDeleteAsset,
+  getListAssetsQueryKey, getGetDashboardSummaryQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
-import { format } from "date-fns";
+import { useRoute, useLocation, Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { format, differenceInDays } from "date-fns";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Calendar, 
-  Package, 
-  Activity,
-  PlusCircle,
-  Truck,
-  CheckCircle,
-  Trash2,
-  Edit2,
-  Save,
-  X,
-  QrCode,
-  Download
-} from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  ArrowLeft, Edit2, Trash2, Leaf, FlaskConical,
+  MapPin, Calendar, Tag, Package, DollarSign,
+  User2, BarChart2, TrendingDown, ShieldAlert, CheckCircle2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
-const movementSchema = z.object({
-  type: z.enum(["Created", "Stored", "Dispatched", "Delivered"]),
-  location: z.string().min(1, "Location is required"),
-  notes: z.string().optional(),
+const SEED_CATEGORIES = ["Vegetable", "Grain", "Legume", "Oilseed", "Fiber", "Spice", "Fruit", "Herb", "Other"] as const;
+
+const updateSchema = z.object({
+  seedName: z.string().min(1, "Required"),
+  batchNumber: z.string().min(1, "Required"),
+  quantity: z.coerce.number().min(0),
+  location: z.string().min(1, "Required"),
+  expiryDate: z.string().min(1, "Required"),
+  productionDate: z.string().optional(),
+  supplier: z.string().optional(),
+  category: z.enum(SEED_CATEGORIES).optional(),
+  germinationRate: z.coerce.number().min(0).max(100).optional().or(z.literal("")),
+  pricePerUnit: z.coerce.number().min(0).optional().or(z.literal("")),
 });
+type UpdateForm = z.infer<typeof updateSchema>;
 
-type MovementFormValues = z.infer<typeof movementSchema>;
+function StatusBadge({ status, daysRemaining }: { status: string; daysRemaining: number }) {
+  if (status === "Expired") return (
+    <span className="inline-flex items-center gap-2 rounded-xl bg-destructive/10 border border-destructive/20 px-3.5 py-1.5 text-[13px] font-bold text-destructive">
+      🔴 Expired
+    </span>
+  );
+  if (status === "Expiring") return (
+    <span className="inline-flex items-center gap-2 rounded-xl bg-amber-500/10 border border-amber-500/20 px-3.5 py-1.5 text-[13px] font-bold text-amber-700 dark:text-amber-400">
+      🟡 Expiring in {daysRemaining}d
+    </span>
+  );
+  return (
+    <span className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 text-[13px] font-bold text-emerald-700 dark:text-emerald-400">
+      🟢 Fresh • {daysRemaining}d remaining
+    </span>
+  );
+}
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  },
-  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } }
-};
+function StockForecast({ quantity, status, daysRemaining }: { quantity: number; status: string; daysRemaining: number }) {
+  const weeklyTurnover = 20;
+  const weeksLeft = Math.floor(quantity / weeklyTurnover);
+  const stockRunDate = new Date();
+  stockRunDate.setDate(stockRunDate.getDate() + weeksLeft * 7);
+  const expiryFirst = status !== "Fresh" && daysRemaining < weeksLeft * 7;
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
-};
+  return (
+    <Card className="rounded-2xl border-border/60 shadow-sm bg-gradient-to-br from-primary/5 to-transparent">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <BarChart2 className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold tracking-tight">Stock Forecast</h3>
+            <p className="text-[12px] text-muted-foreground">Based on ~{weeklyTurnover} units/week typical turnover</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-card border border-border/50 rounded-xl p-4">
+            <p className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5">Stock Duration</p>
+            <p className="text-2xl font-bold">{weeksLeft}<span className="text-base font-medium text-muted-foreground ml-1">wks</span></p>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-4">
+            <p className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5">Stockout Date</p>
+            <p className="text-[15px] font-bold">{format(stockRunDate, "MMM d, yyyy")}</p>
+          </div>
+          <div className={`border rounded-xl p-4 ${expiryFirst ? "bg-amber-500/10 border-amber-500/30" : "bg-card border-border/50"}`}>
+            <p className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5">Risk Flag</p>
+            <div className="flex items-center gap-2">
+              {expiryFirst ? (
+                <>
+                  <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0" />
+                  <span className="text-[13px] font-bold text-amber-700 dark:text-amber-400">Expiry first</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span className="text-[13px] font-bold text-emerald-700">Stockout first</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AssetDetail() {
   const [, params] = useRoute("/inventory/:id");
-  const id = params?.id;
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const id = params?.id ?? "";
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.get("edit") === "true") {
-      setIsEditing(true);
-    }
-  }, []);
-
-  const { data: asset, isLoading: isAssetLoading } = useGetAsset(id as string, { 
-    query: { enabled: !!id, queryKey: getGetAssetQueryKey(id as string) } 
-  });
-  
-  const { data: history, isLoading: isHistoryLoading } = useListAssetHistory(id as string, {
-    query: { enabled: !!id, queryKey: getListAssetHistoryQueryKey(id as string) }
-  });
-
+  const { data: asset, isLoading } = useGetAsset(id);
   const updateAsset = useUpdateAsset();
   const deleteAsset = useDeleteAsset();
-  const createHistory = useCreateAssetHistory();
 
-  const movementForm = useForm<MovementFormValues>({
-    resolver: zodResolver(movementSchema),
-    defaultValues: {
-      type: "Stored",
-      location: "",
-      notes: "",
-    },
-  });
-
-  const editForm = useForm({
-    resolver: zodResolver(z.object({
-      seedName: z.string().min(1),
-      batchNumber: z.string().min(1),
-      quantity: z.coerce.number().min(0),
-      location: z.string().min(1),
-      expiryDate: z.string()
-    })),
+  const form = useForm<UpdateForm>({
+    resolver: zodResolver(updateSchema),
     values: asset ? {
       seedName: asset.seedName,
       batchNumber: asset.batchNumber,
       quantity: asset.quantity,
       location: asset.location,
-      expiryDate: new Date(asset.expiryDate).toISOString().split('T')[0]
-    } : undefined
+      expiryDate: asset.expiryDate.split("T")[0],
+      productionDate: (asset as any).productionDate ? (asset as any).productionDate.split("T")[0] : "",
+      supplier: (asset as any).supplier ?? "",
+      category: (asset as any).category ?? undefined,
+      germinationRate: (asset as any).germinationRate ?? "",
+      pricePerUnit: (asset as any).pricePerUnit ?? "",
+    } : undefined,
   });
 
-  if (isAssetLoading || !asset) {
+  const onSubmit = (data: UpdateForm) => {
+    const payload: Record<string, unknown> = {
+      seedName: data.seedName,
+      batchNumber: data.batchNumber,
+      quantity: data.quantity,
+      location: data.location,
+      expiryDate: new Date(data.expiryDate).toISOString(),
+    };
+    if (data.productionDate) payload.productionDate = new Date(data.productionDate).toISOString();
+    if (data.supplier) payload.supplier = data.supplier;
+    if (data.category) payload.category = data.category;
+    if (data.germinationRate !== "" && data.germinationRate != null) payload.germinationRate = Number(data.germinationRate);
+    if (data.pricePerUnit !== "" && data.pricePerUnit != null) payload.pricePerUnit = Number(data.pricePerUnit);
+
+    updateAsset.mutate({ id, data: payload as any }, {
+      onSuccess: () => {
+        toast.success("Batch updated");
+        queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+        setIsEditing(false);
+      },
+      onError: () => toast.error("Failed to update"),
+    });
+  };
+
+  const onDelete = () => {
+    deleteAsset.mutate({ id }, {
+      onSuccess: () => {
+        toast.success("Batch deleted");
+        queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
+        setLocation("/inventory");
+      },
+      onError: () => toast.error("Failed to delete"),
+    });
+  };
+
+  if (isLoading || !asset) {
     return (
-      <div className="p-8 md:p-10 max-w-6xl mx-auto space-y-8">
-        <div className="h-10 w-64 bg-muted animate-pulse rounded-lg" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 space-y-6">
-            <div className="h-64 bg-muted animate-pulse rounded-2xl" />
-            <div className="h-72 bg-muted animate-pulse rounded-2xl" />
-          </div>
-          <div className="lg:col-span-2">
-            <div className="h-96 bg-muted animate-pulse rounded-2xl" />
-          </div>
+      <div className="p-8 md:p-10 space-y-8 max-w-5xl mx-auto">
+        <div className="h-8 w-48 bg-muted animate-pulse rounded-lg" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => <div key={i} className="h-28 bg-muted animate-pulse rounded-2xl" />)}
         </div>
+        <div className="h-40 bg-muted animate-pulse rounded-2xl" />
       </div>
     );
   }
 
-  const handleDelete = () => {
-    deleteAsset.mutate({ id: asset.id }, {
-      onSuccess: () => {
-        toast.success("Batch deleted successfully");
-        queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
-        queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-        setLocation("/inventory");
-      },
-      onError: () => toast.error("Failed to delete asset")
-    });
-  };
+  const daysRemaining = differenceInDays(new Date(asset.expiryDate), new Date());
+  const totalValue = asset.quantity * ((asset as any).pricePerUnit ?? 0);
 
-  const onEditSubmit = (data: any) => {
-    updateAsset.mutate({
-      id: asset.id,
-      data: {
-        ...data,
-        expiryDate: new Date(data.expiryDate).toISOString()
-      }
-    }, {
-      onSuccess: () => {
-        toast.success("Asset updated successfully");
-        setIsEditing(false);
-        queryClient.invalidateQueries({ queryKey: getGetAssetQueryKey(asset.id) });
-        queryClient.invalidateQueries({ queryKey: getListAssetsQueryKey() });
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      },
-      onError: () => toast.error("Failed to update asset")
-    });
-  };
-
-  const onMovementSubmit = (data: MovementFormValues) => {
-    createHistory.mutate({
-      id: asset.id,
-      data
-    }, {
-      onSuccess: () => {
-        toast.success("Movement event logged successfully");
-        movementForm.reset({ type: "Stored", location: "", notes: "" });
-        queryClient.invalidateQueries({ queryKey: getListAssetHistoryQueryKey(asset.id) });
-        
-        if (data.location !== asset.location) {
-           queryClient.invalidateQueries({ queryKey: getGetAssetQueryKey(asset.id) });
-        }
-      },
-      onError: () => toast.error("Failed to log event")
-    });
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Fresh":
-        return (
-          <div className="inline-flex items-center rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-[12px] font-bold uppercase tracking-wider text-primary">
-            <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-primary"></span>
-            Fresh
-          </div>
-        );
-      case "Expiring":
-        return (
-          <div className="inline-flex items-center rounded-md border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[12px] font-bold uppercase tracking-wider text-amber-600">
-            <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-amber-500"></span>
-            Expiring
-          </div>
-        );
-      case "Expired":
-        return (
-          <div className="inline-flex items-center rounded-md border border-destructive/20 bg-destructive/10 px-2.5 py-1 text-[12px] font-bold uppercase tracking-wider text-destructive">
-            <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-destructive"></span>
-            Expired
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case "Created": return <PlusCircle className="h-4 w-4 text-primary" />;
-      case "Stored": return <Package className="h-4 w-4 text-blue-500" />;
-      case "Dispatched": return <Truck className="h-4 w-4 text-orange-500" />;
-      case "Delivered": return <CheckCircle className="h-4 w-4 text-green-500" />;
-      default: return <Activity className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
+  const detailFields = [
+    { icon: Leaf, label: "Seed Name", value: asset.seedName },
+    { icon: Tag, label: "Batch Number", value: <span className="font-mono">{asset.batchNumber}</span> },
+    { icon: Package, label: "Category", value: (asset as any).category ?? "—" },
+    { icon: User2, label: "Supplier", value: (asset as any).supplier ?? "—" },
+    { icon: MapPin, label: "Location", value: asset.location },
+    { icon: Calendar, label: "Production Date", value: (asset as any).productionDate ? format(new Date((asset as any).productionDate), "MMM d, yyyy") : "—" },
+    { icon: Calendar, label: "Expiry Date", value: format(new Date(asset.expiryDate), "MMM d, yyyy") },
+    { icon: FlaskConical, label: "Germination Rate", value: (asset as any).germinationRate != null ? `${(asset as any).germinationRate}%` : "—" },
+    { icon: DollarSign, label: "Price Per Unit", value: (asset as any).pricePerUnit != null ? `$${(asset as any).pricePerUnit.toFixed(2)}` : "—" },
+    {
+      icon: DollarSign, label: "Total Batch Value",
+      value: totalValue > 0 ? <span className="font-bold text-primary">${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span> : "—",
+    },
+  ];
 
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      exit="exit"
-      className="p-8 md:p-10 max-w-6xl mx-auto space-y-8"
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      className="p-8 md:p-10 max-w-5xl mx-auto space-y-8 pb-16"
     >
-      <motion.div variants={itemVariants}>
-        <Link href="/inventory" className="text-[13px] font-semibold text-muted-foreground hover:text-foreground inline-flex items-center mb-6 transition-colors group px-3 py-1.5 -ml-3 rounded-lg hover:bg-muted/50">
-          <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Seed Inventory
-        </Link>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-          <div>
-            <div className="flex flex-wrap items-center gap-4 mb-2">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">{asset.seedName}</h1>
-              {getStatusBadge(asset.status)}
-            </div>
-            <p className="text-muted-foreground font-mono mt-1 text-[15px] font-medium">{asset.batchNumber}</p>
-          </div>
-          <div className="flex gap-3 flex-wrap">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="h-10 px-5 rounded-xl font-semibold shadow-sm bg-card border-border/60 hover:bg-muted/50 active:scale-[0.97] transition-all">
-                  <QrCode className="h-4 w-4 mr-2" /> QR Code
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="rounded-2xl border-border/60 shadow-xl max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="text-xl">Batch QR Code</DialogTitle>
-                  <DialogDescription className="text-[14px]">
-                    Scan this code to open the batch detail page on any device.
-                  </DialogDescription>
-                </DialogHeader>
-                <BatchQrCard
-                  batchNumber={asset.batchNumber}
-                  seedName={asset.seedName}
-                  assetId={asset.id}
-                />
-              </DialogContent>
-            </Dialog>
-            <Button variant={isEditing ? "default" : "outline"} className={`h-10 px-5 rounded-xl font-semibold shadow-sm transition-all active:scale-[0.97] ${isEditing ? "bg-muted text-foreground hover:bg-muted/80 border-border/50" : "bg-card border-border/60 hover:bg-muted/50"}`} onClick={() => setIsEditing(!isEditing)}>
-              {isEditing ? <X className="h-4 w-4 mr-2" /> : <Edit2 className="h-4 w-4 mr-2" />}
-              {isEditing ? "Cancel Edit" : "Edit Batch"}
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" className="h-10 px-5 rounded-xl font-semibold text-destructive border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive shadow-sm transition-all">
-                  <Trash2 className="h-4 w-4 mr-2" /> Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-2xl border-border/60 shadow-xl">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-xl">Delete Batch</AlertDialogTitle>
-                  <AlertDialogDescription className="text-[15px]">
-                    This will permanently delete <strong>{asset.seedName}</strong> and its history. This cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="mt-6 gap-3">
-                  <AlertDialogCancel className="rounded-xl h-10 px-5 font-semibold mt-0">Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl h-10 px-5 font-semibold">
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-5">
+        <div>
+          <Link href="/inventory" className="text-[13px] font-semibold text-muted-foreground hover:text-foreground inline-flex items-center mb-5 group px-3 py-1.5 -ml-3 rounded-lg hover:bg-muted/50 transition-colors">
+            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Inventory
+          </Link>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">{asset.seedName}</h1>
+          <div className="flex flex-wrap items-center gap-3 mt-3">
+            <span className="font-mono text-sm bg-muted/70 px-3 py-1 rounded-lg border border-border/50 font-bold text-muted-foreground">{asset.batchNumber}</span>
+            <StatusBadge status={asset.status} daysRemaining={daysRemaining} />
           </div>
         </div>
-      </motion.div>
+        <div className="flex gap-2 shrink-0">
+          <Button variant="outline" onClick={() => setIsEditing(!isEditing)} className="h-10 px-4 rounded-xl font-semibold gap-2 border-border/60 text-sm">
+            <Edit2 className="h-4 w-4" /> {isEditing ? "Cancel Edit" : "Edit"}
+          </Button>
+          <Button variant="outline" onClick={() => setDeleteDialogOpen(true)} className="h-10 px-4 rounded-xl font-semibold gap-2 border-destructive/30 text-destructive hover:bg-destructive/10 text-sm">
+            <Trash2 className="h-4 w-4" /> Delete
+          </Button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <motion.div variants={itemVariants} className="lg:col-span-1 space-y-8">
-          <Card className="bg-card border border-border/60 rounded-2xl p-6 shadow-md shadow-black/5 dark:shadow-white/5 overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none">
-               <Package className="h-32 w-32" />
-            </div>
-            <h3 className="text-lg font-bold tracking-tight mb-6 relative z-10">Properties</h3>
-            {isEditing ? (
-              <Form {...editForm}>
-                <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-5 relative z-10">
-                  <FormField control={editForm.control} name="seedName" render={({ field }) => (
-                    <FormItem><FormLabel className="text-[13px] font-semibold text-foreground/80">Seed Name</FormLabel><FormControl><Input className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px]" {...field} /></FormControl></FormItem>
-                  )}/>
-                  <FormField control={editForm.control} name="batchNumber" render={({ field }) => (
-                    <FormItem><FormLabel className="text-[13px] font-semibold text-foreground/80">Batch Number</FormLabel><FormControl><Input className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px] font-mono" {...field} /></FormControl></FormItem>
-                  )}/>
-                  <FormField control={editForm.control} name="quantity" render={({ field }) => (
-                    <FormItem><FormLabel className="text-[13px] font-semibold text-foreground/80">Quantity</FormLabel><FormControl><Input type="number" className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px]" {...field} /></FormControl></FormItem>
-                  )}/>
-                  <FormField control={editForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel className="text-[13px] font-semibold text-foreground/80">Location</FormLabel><FormControl><Input className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px]" {...field} /></FormControl></FormItem>
-                  )}/>
-                  <FormField control={editForm.control} name="expiryDate" render={({ field }) => (
-                    <FormItem><FormLabel className="text-[13px] font-semibold text-foreground/80">Expiry Date</FormLabel><FormControl><Input type="date" className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px]" {...field} /></FormControl></FormItem>
-                  )}/>
-                  <Button type="submit" className="w-full mt-6 h-11 rounded-xl font-semibold shadow-md" disabled={updateAsset.isPending}>
-                    <Save className="h-4 w-4 mr-2" /> Save Changes
-                  </Button>
-                </form>
-              </Form>
-            ) : (
-              <div className="space-y-6 relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Package className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground/70">Quantity</p>
-                    <p className="text-[15px] font-bold text-foreground mt-0.5">{asset.quantity.toLocaleString()} units</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-blue-500" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground/70">Location</p>
-                    <p className="text-[15px] font-bold text-foreground mt-0.5">{asset.location}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                    <Calendar className="h-5 w-5 text-amber-500" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground/70">Expiry</p>
-                    <p className="text-[15px] font-bold text-foreground mt-0.5">{format(new Date(asset.expiryDate), "MMM d, yyyy")}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* Summary KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "Quantity", value: asset.quantity.toLocaleString(), sub: "units in stock" },
+          { label: "Days Remaining", value: daysRemaining < 0 ? "Expired" : daysRemaining.toString(), sub: "until expiry" },
+          {
+            label: "Batch Value",
+            value: totalValue > 0 ? `$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "—",
+            sub: "total estimated",
+          },
+          {
+            label: "Germination",
+            value: (asset as any).germinationRate != null ? `${(asset as any).germinationRate}%` : "—",
+            sub: "viability rate",
+          },
+        ].map((kpi, i) => (
+          <Card key={i} className="rounded-2xl border-border/60 shadow-sm">
+            <CardContent className="p-5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{kpi.label}</p>
+              <p className="text-2xl font-bold tracking-tight mt-1.5">{kpi.value}</p>
+              <p className="text-[12px] text-muted-foreground mt-1">{kpi.sub}</p>
+            </CardContent>
           </Card>
+        ))}
+      </div>
 
-          <Card className="bg-card border border-border/60 rounded-2xl p-6 shadow-md shadow-black/5 dark:shadow-white/5">
-            <h3 className="text-lg font-bold tracking-tight mb-6">Log Event</h3>
-            <Form {...movementForm}>
-              <form onSubmit={movementForm.handleSubmit(onMovementSubmit)} className="space-y-5">
-                <FormField control={movementForm.control} name="type" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Event Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px]">
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="rounded-xl">
-                        <SelectItem value="Stored" className="rounded-lg py-2">Stored</SelectItem>
-                        <SelectItem value="Dispatched" className="rounded-lg py-2">Dispatched</SelectItem>
-                        <SelectItem value="Delivered" className="rounded-lg py-2">Delivered</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}/>
-                <FormField control={movementForm.control} name="location" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Location</FormLabel>
-                    <FormControl><Input placeholder="e.g. Warehouse B" className="h-10 rounded-xl bg-muted/40 border-border/50 text-[14px]" {...field} /></FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}/>
-                <FormField control={movementForm.control} name="notes" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[13px] font-semibold text-foreground/80">Notes (Optional)</FormLabel>
-                    <FormControl><Textarea placeholder="Details..." className="resize-none min-h-[80px] rounded-xl bg-muted/40 border-border/50 text-[14px]" {...field} /></FormControl>
-                    <FormMessage className="text-[12px]" />
-                  </FormItem>
-                )}/>
-                <Button type="submit" className="w-full h-11 rounded-xl font-semibold shadow-md mt-2" disabled={createHistory.isPending}>
-                  {createHistory.isPending ? "Logging..." : "Log Event"}
-                </Button>
+      {/* Stock Forecast */}
+      <StockForecast quantity={asset.quantity} status={asset.status} daysRemaining={daysRemaining} />
+
+      {/* Detail / Edit */}
+      {isEditing ? (
+        <Card className="rounded-2xl border-border/60 shadow-md">
+          <CardContent className="p-8">
+            <h3 className="text-xl font-bold tracking-tight mb-6">Edit Batch</h3>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    { name: "seedName" as const, label: "Seed Name", type: "text" },
+                    { name: "batchNumber" as const, label: "Batch Number", type: "text" },
+                    { name: "supplier" as const, label: "Supplier", type: "text" },
+                    { name: "quantity" as const, label: "Quantity", type: "number" },
+                    { name: "location" as const, label: "Location", type: "text" },
+                    { name: "productionDate" as const, label: "Production Date", type: "date" },
+                    { name: "expiryDate" as const, label: "Expiry Date", type: "date" },
+                    { name: "germinationRate" as const, label: "Germination Rate (%)", type: "number" },
+                    { name: "pricePerUnit" as const, label: "Price Per Unit ($)", type: "number" },
+                  ].map(({ name, label, type }) => (
+                    <FormField key={name} control={form.control} name={name} render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[13px] font-semibold text-foreground/80">{label}</FormLabel>
+                        <FormControl>
+                          <Input type={type} className="h-11 rounded-xl bg-muted/40 border-border/50" {...field} value={field.value ?? ""} />
+                        </FormControl>
+                        <FormMessage className="text-[12px]" />
+                      </FormItem>
+                    )}/>
+                  ))}
+                  <FormField control={form.control} name="category" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[13px] font-semibold text-foreground/80">Category</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                        <FormControl>
+                          <SelectTrigger className="h-11 rounded-xl bg-muted/40 border-border/50">
+                            <SelectValue placeholder="Select category..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="rounded-xl">
+                          {SEED_CATEGORIES.map((c) => (
+                            <SelectItem key={c} value={c} className="rounded-lg">{c}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-[12px]" />
+                    </FormItem>
+                  )}/>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <Button type="submit" className="h-11 px-8 rounded-xl font-semibold shadow-md" disabled={updateAsset.isPending}>
+                    {updateAsset.isPending ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setIsEditing(false)} className="h-11 px-6 rounded-xl font-semibold border-border/60">
+                    Cancel
+                  </Button>
+                </div>
               </form>
             </Form>
-          </Card>
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="lg:col-span-2">
-          <Card className="bg-card border border-border/60 rounded-2xl shadow-md shadow-black/5 dark:shadow-white/5 min-h-[600px] flex flex-col">
-            <div className="px-8 py-6 border-b border-border/60 bg-muted/20">
-              <h3 className="text-lg font-bold tracking-tight">Timeline</h3>
-            </div>
-            <div className="p-8 flex-1">
-              {isHistoryLoading ? (
-                <div className="space-y-10">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="flex gap-5">
-                      <div className="h-8 w-8 rounded-full bg-muted/60 animate-pulse" />
-                      <div className="space-y-3 flex-1 pt-1">
-                        <div className="h-4 w-1/3 bg-muted/60 animate-pulse rounded-md" />
-                        <div className="h-3 w-1/2 bg-muted/60 animate-pulse rounded-md" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : history?.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full py-20 text-center">
-                  <div className="h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-5">
-                    <Activity className="h-8 w-8 text-muted-foreground/40" />
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="rounded-2xl border-border/60 shadow-md">
+          <CardContent className="p-8">
+            <h3 className="text-xl font-bold tracking-tight mb-6">Batch Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-1">
+              {detailFields.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex items-start gap-4 py-4 border-b border-border/40 last:border-0">
+                  <div className="h-8 w-8 rounded-lg bg-muted/60 flex items-center justify-center shrink-0 mt-0.5">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <p className="text-lg font-semibold text-foreground">No history yet</p>
-                  <p className="text-[15px] text-muted-foreground mt-1.5">Log a movement event to start tracking.</p>
+                  <div>
+                    <p className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p>
+                    <p className="text-[15px] font-semibold text-foreground mt-0.5">{value}</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="relative border-l-[3px] border-muted ml-4 space-y-10 py-2">
-                  {history?.map((event, i) => (
-                    <motion.div 
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1, type: "spring" as const, stiffness: 300, damping: 24 }}
-                      key={event.id} 
-                      className="relative pl-10 group"
-                    >
-                      <div className="absolute -left-[19px] top-0 h-9 w-9 rounded-full border-4 border-card bg-muted flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
-                        {getEventIcon(event.type)}
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 bg-muted/10 hover:bg-muted/30 p-5 rounded-2xl border border-transparent hover:border-border/50 transition-all duration-300 -mt-3">
-                        <div>
-                          <p className="text-[16px] font-bold text-foreground">{event.type}</p>
-                          <p className="text-[14px] text-muted-foreground mt-1">
-                            <span className="font-semibold text-foreground/80">{event.location}</span>
-                          </p>
-                          {event.notes && (
-                            <p className="text-[14px] text-muted-foreground mt-3 bg-card p-3 rounded-xl border border-border/60 max-w-md leading-relaxed shadow-sm">
-                              {event.notes}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-[13px] font-medium text-muted-foreground whitespace-nowrap font-mono bg-muted/40 px-3 py-1.5 rounded-lg border border-border/40">
-                          {format(new Date(event.timestamp), "MMM d, yyyy")}
-                          <span className="mx-2 text-muted-foreground/40">•</span>
-                          {format(new Date(event.timestamp), "h:mm a")}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Event History */}
+      {(asset.events ?? []).length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold tracking-tight">Event History</h3>
+          <Card className="rounded-2xl border-border/60 shadow-md">
+            <CardContent className="p-0">
+              <div className="divide-y divide-border/60">
+                {(asset.events ?? []).map((event: any, i: number) => (
+                  <div key={i} className="flex items-center gap-5 px-6 py-4 hover:bg-muted/30 transition-colors">
+                    <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
+                      {event.type === "Created" && <Package className="h-4 w-4 text-primary" />}
+                      {event.type === "Stored" && <MapPin className="h-4 w-4 text-blue-500" />}
+                      {event.type === "Dispatched" && <TrendingDown className="h-4 w-4 text-amber-500" />}
+                      {event.type === "Delivered" && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[14px] font-semibold">{event.type} <span className="font-normal text-muted-foreground">at</span> {event.location}</p>
+                      {event.notes && <p className="text-[12px] text-muted-foreground mt-0.5">{event.notes}</p>}
+                    </div>
+                    <span className="text-[13px] text-muted-foreground font-medium shrink-0">
+                      {format(new Date(event.timestamp), "MMM d, h:mm a")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
           </Card>
-        </motion.div>
-      </div>
+        </div>
+      )}
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="rounded-2xl border-border/60 shadow-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl">Delete Batch</AlertDialogTitle>
+            <AlertDialogDescription className="text-[15px]">
+              Permanently delete <strong>{asset.seedName}</strong> ({asset.batchNumber})? This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6 gap-3">
+            <AlertDialogCancel className="rounded-xl h-10 px-5 font-semibold mt-0">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={onDelete} className="bg-destructive hover:bg-destructive/90 rounded-xl h-10 px-5 font-semibold">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
-  );
-}
-
-function BatchQrCard({
-  batchNumber,
-  seedName,
-  assetId,
-}: {
-  batchNumber: string;
-  seedName: string;
-  assetId: string;
-}) {
-  const url = `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, "")}/inventory/${assetId}`;
-
-  const handleDownload = () => {
-    const svg = document.getElementById("batch-qr-svg") as SVGSVGElement | null;
-    if (!svg) {
-      toast.error("Unable to find QR code");
-      return;
-    }
-    const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(svg);
-    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const objectUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = objectUrl;
-    link.download = `${batchNumber}-qr.svg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(objectUrl);
-    toast.success("QR code downloaded");
-  };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success("Batch link copied");
-    } catch {
-      toast.error("Failed to copy link");
-    }
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-5 pt-4">
-      <div className="bg-white p-5 rounded-2xl shadow-md border border-border/60">
-        <QRCodeSVG
-          id="batch-qr-svg"
-          value={url}
-          size={192}
-          level="M"
-          includeMargin={false}
-        />
-      </div>
-      <div className="text-center space-y-1">
-        <p className="text-[15px] font-bold text-foreground">{seedName}</p>
-        <p className="text-[12px] font-mono text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md inline-block">
-          {batchNumber}
-        </p>
-      </div>
-      <div className="flex gap-3 w-full">
-        <Button
-          onClick={handleCopy}
-          variant="outline"
-          className="flex-1 h-10 rounded-xl font-semibold border-border/60 active:scale-[0.97] transition-all"
-        >
-          Copy Link
-        </Button>
-        <Button
-          onClick={handleDownload}
-          className="flex-1 h-10 rounded-xl font-semibold shadow-sm active:scale-[0.97] transition-all"
-        >
-          <Download className="h-4 w-4 mr-2" /> Download
-        </Button>
-      </div>
-    </div>
   );
 }

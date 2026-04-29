@@ -1,262 +1,505 @@
 {
   "assets": [
     {
-      "id": "79c3b65a-c436-45c3-bdb0-028a7a126b98",
+      "id": "4d7ba35d-472a-426b-8f48-c06a3534d03e",
       "seedName": "Hybrid Chilli KS-401",
       "batchNumber": "CHL-2026-A12",
       "quantity": 320,
-      "location": "Warehouse A — Shelf 3",
-      "expiryDate": "2026-12-04",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "location": "Warehouse A",
+      "expiryDate": "2026-12-05",
+      "createdAt": "2026-03-15T04:21:21.176Z",
+      "productionDate": "2026-02-28",
+      "supplier": "Kaveri Seeds Ltd",
+      "category": "Vegetable",
+      "germinationRate": 92,
+      "pricePerUnit": 18.5
     },
     {
-      "id": "c80f09ff-9d42-46d8-ae55-6bf2380b58bc",
+      "id": "b76cd8c2-213a-44b6-a6e1-b97a22a83d79",
       "seedName": "Wheat HD-2967",
       "batchNumber": "WHT-2026-B07",
       "quantity": 42,
-      "location": "Warehouse B — Bin 11",
-      "expiryDate": "2026-05-16",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "location": "Warehouse B",
+      "expiryDate": "2026-05-17",
+      "createdAt": "2026-02-08T04:21:21.176Z",
+      "productionDate": "2026-01-24",
+      "supplier": "National Seeds Corp",
+      "category": "Grain",
+      "germinationRate": 78,
+      "pricePerUnit": 6
     },
     {
-      "id": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+      "id": "d7762e79-9297-4496-ad74-7727c80bc0b7",
       "seedName": "Maize NK-30",
       "batchNumber": "MZE-2026-C04",
       "quantity": 580,
       "location": "Cold Storage 2",
-      "expiryDate": "2027-06-12",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "expiryDate": "2027-06-13",
+      "createdAt": "2026-03-30T04:21:21.176Z",
+      "productionDate": "2026-03-10",
+      "supplier": "Syngenta India",
+      "category": "Grain",
+      "germinationRate": 96,
+      "pricePerUnit": 22
     },
     {
-      "id": "5a4ee2c9-88c8-4fe9-baff-ab736846837b",
+      "id": "b9a1b0c4-4944-40f8-97da-cec58cc278ba",
       "seedName": "Paddy MTU-1010",
       "batchNumber": "PDY-2025-K22",
       "quantity": 18,
-      "location": "Warehouse A — Shelf 7",
-      "expiryDate": "2026-04-16",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "location": "Warehouse A",
+      "expiryDate": "2026-04-17",
+      "createdAt": "2025-12-30T04:21:21.176Z",
+      "productionDate": "2025-12-10",
+      "supplier": "TNAU Agri Seeds",
+      "category": "Grain",
+      "germinationRate": 61,
+      "pricePerUnit": 8.5
     },
     {
-      "id": "b1b2633a-5802-4159-8590-eb0ad05d490f",
+      "id": "0c719b21-87b8-48f4-94bb-6c4f1080c6d8",
       "seedName": "Cotton Bt-RCH-659",
       "batchNumber": "CTN-2026-D19",
       "quantity": 125,
-      "location": "Warehouse C — Pallet 5",
-      "expiryDate": "2026-08-01",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "location": "Warehouse C",
+      "expiryDate": "2026-08-02",
+      "createdAt": "2026-04-09T04:21:21.176Z",
+      "productionDate": "2026-03-20",
+      "supplier": "Rasi Seeds Pvt Ltd",
+      "category": "Fiber",
+      "germinationRate": 88,
+      "pricePerUnit": 35
     },
     {
-      "id": "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218",
+      "id": "c20e5bb8-cd53-4b45-a33f-a22e571ca40d",
       "seedName": "Tomato Arka Rakshak",
       "batchNumber": "TMT-2026-E03",
       "quantity": 240,
       "location": "Cold Storage 1",
-      "expiryDate": "2026-05-24",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "expiryDate": "2026-05-25",
+      "createdAt": "2026-04-19T04:21:21.176Z",
+      "productionDate": "2026-04-04",
+      "supplier": "IIHR Bangalore",
+      "category": "Vegetable",
+      "germinationRate": 91,
+      "pricePerUnit": 55
     },
     {
-      "id": "2af5dcdb-f548-4511-b564-9881137c7f50",
+      "id": "cbdf6a41-9386-49da-a881-fa14d9517c06",
       "seedName": "Soybean JS-335",
       "batchNumber": "SBN-2026-F08",
       "quantity": 410,
-      "location": "Warehouse B — Bin 4",
-      "expiryDate": "2027-10-20",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "location": "Warehouse B",
+      "expiryDate": "2027-10-21",
+      "createdAt": "2026-04-14T04:21:21.176Z",
+      "productionDate": "2026-03-30",
+      "supplier": "Mahyco Seeds",
+      "category": "Legume",
+      "germinationRate": 94,
+      "pricePerUnit": 12
     },
     {
-      "id": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+      "id": "6443fb92-6eba-4387-8c70-bfe7cab9428d",
       "seedName": "Onion N-53",
       "batchNumber": "ONI-2025-G14",
       "quantity": 32,
-      "location": "Warehouse A — Shelf 12",
-      "expiryDate": "2026-05-05",
-      "createdAt": "2026-04-28T10:20:08.006Z"
+      "location": "Warehouse A",
+      "expiryDate": "2026-05-06",
+      "createdAt": "2026-01-29T04:21:21.176Z",
+      "productionDate": "2026-01-09",
+      "supplier": "Indo-American Seeds",
+      "category": "Vegetable",
+      "germinationRate": 73,
+      "pricePerUnit": 42
+    },
+    {
+      "id": "4fa91489-9892-4b8f-ad87-f56e8ee1c247",
+      "seedName": "Sunflower KBSH-44",
+      "batchNumber": "SFL-2026-H01",
+      "quantity": 195,
+      "location": "Cold Storage 1",
+      "expiryDate": "2026-10-26",
+      "createdAt": "2026-04-04T04:21:21.176Z",
+      "productionDate": "2026-03-15",
+      "supplier": "Karnataka State Seeds Corp",
+      "category": "Oilseed",
+      "germinationRate": 87,
+      "pricePerUnit": 28
+    },
+    {
+      "id": "f1bbc332-75bc-42ec-8af3-c8a6da23c35d",
+      "seedName": "Coriander RCr-41",
+      "batchNumber": "COR-2026-I06",
+      "quantity": 85,
+      "location": "Warehouse C",
+      "expiryDate": "2027-02-23",
+      "createdAt": "2026-04-24T04:21:21.176Z",
+      "productionDate": "2026-04-09",
+      "supplier": "Rajasthan Seeds Ltd",
+      "category": "Spice",
+      "germinationRate": 83,
+      "pricePerUnit": 15
+    },
+    {
+      "id": "3de9acc7-2238-4d74-abfe-89a73f17839f",
+      "seedName": "Groundnut TAG-24",
+      "batchNumber": "GND-2026-J03",
+      "quantity": 270,
+      "location": "Warehouse B",
+      "expiryDate": "2027-07-23",
+      "createdAt": "2026-04-17T04:21:21.176Z",
+      "productionDate": "2026-03-30",
+      "supplier": "ICRISAT Seeds",
+      "category": "Oilseed",
+      "germinationRate": 95,
+      "pricePerUnit": 9.5
+    },
+    {
+      "id": "3deea9c9-f4f1-47c9-861d-6d35d5927d9c",
+      "seedName": "Bitter Gourd Priya",
+      "batchNumber": "BTG-2026-K11",
+      "quantity": 60,
+      "location": "Cold Storage 2",
+      "expiryDate": "2026-05-21",
+      "createdAt": "2026-04-21T04:21:21.176Z",
+      "productionDate": "2026-04-07",
+      "supplier": "East-West Seeds",
+      "category": "Vegetable",
+      "germinationRate": 89,
+      "pricePerUnit": 48
     }
   ],
   "history": {
-    "79c3b65a-c436-45c3-bdb0-028a7a126b98": [
+    "4d7ba35d-472a-426b-8f48-c06a3534d03e": [
       {
-        "id": "ca4c0bd9-4047-4af0-ac0f-18ead585d55f",
-        "assetId": "79c3b65a-c436-45c3-bdb0-028a7a126b98",
+        "id": "eefd7fc9-7643-409d-98a5-d705482fc93c",
+        "assetId": "4d7ba35d-472a-426b-8f48-c06a3534d03e",
         "type": "Created",
-        "location": "Warehouse A — Shelf 3",
+        "location": "Warehouse A",
         "notes": "Batch CHL-2026-A12 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-03-15T04:21:21.176Z"
       },
       {
-        "id": "f40e7a35-fd1b-4276-a350-922dde7cd8a5",
-        "assetId": "79c3b65a-c436-45c3-bdb0-028a7a126b98",
+        "id": "dbfee002-4298-4181-aea9-909963e2fb75",
+        "assetId": "4d7ba35d-472a-426b-8f48-c06a3534d03e",
         "type": "Stored",
-        "location": "Warehouse A — Shelf 3",
+        "location": "Warehouse A",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-03-15T05:21:21.176Z"
       }
     ],
-    "c80f09ff-9d42-46d8-ae55-6bf2380b58bc": [
+    "b76cd8c2-213a-44b6-a6e1-b97a22a83d79": [
       {
-        "id": "51c0c84d-48d4-44c0-86dd-1f8dde28deb5",
-        "assetId": "c80f09ff-9d42-46d8-ae55-6bf2380b58bc",
+        "id": "c8b25a5d-5554-4d7c-92c6-9edb227fb538",
+        "assetId": "b76cd8c2-213a-44b6-a6e1-b97a22a83d79",
         "type": "Created",
-        "location": "Warehouse B — Bin 11",
+        "location": "Warehouse B",
         "notes": "Batch WHT-2026-B07 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-02-08T04:21:21.176Z"
       },
       {
-        "id": "cd9a4ab2-d1aa-4d66-87c1-cc19c751b9d3",
-        "assetId": "c80f09ff-9d42-46d8-ae55-6bf2380b58bc",
+        "id": "25443c77-8031-4c3c-b534-e7d004f5e8ef",
+        "assetId": "b76cd8c2-213a-44b6-a6e1-b97a22a83d79",
         "type": "Stored",
-        "location": "Warehouse B — Bin 11",
+        "location": "Warehouse B",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-02-08T05:21:21.176Z"
       }
     ],
-    "fc73fff0-dece-498b-a0a7-c4ee512b6d02": [
+    "d7762e79-9297-4496-ad74-7727c80bc0b7": [
       {
-        "id": "2c860e81-1cf6-4a42-8175-75ac1a5cda29",
-        "assetId": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+        "id": "e1a4c8dd-665d-416c-a75d-19cf05ced2cb",
+        "assetId": "d7762e79-9297-4496-ad74-7727c80bc0b7",
         "type": "Created",
         "location": "Cold Storage 2",
         "notes": "Batch MZE-2026-C04 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-03-30T04:21:21.176Z"
       },
       {
-        "id": "2367b987-e121-4fa0-846a-f691989ee4c1",
-        "assetId": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+        "id": "6c25220d-cc6a-405d-9418-1ca4977eb60b",
+        "assetId": "d7762e79-9297-4496-ad74-7727c80bc0b7",
         "type": "Stored",
         "location": "Cold Storage 2",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-03-30T05:21:21.176Z"
       },
       {
-        "id": "b82587a3-1f5a-41af-9aee-29582ad441a5",
-        "assetId": "fc73fff0-dece-498b-a0a7-c4ee512b6d02",
+        "id": "4fb9e9bc-caa1-47df-899a-55be0938f3dd",
+        "assetId": "d7762e79-9297-4496-ad74-7727c80bc0b7",
         "type": "Dispatched",
         "location": "Vehicle TN-09-AB-4521",
         "notes": "Outbound to Coimbatore distribution hub.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-04T04:21:21.176Z"
       }
     ],
-    "5a4ee2c9-88c8-4fe9-baff-ab736846837b": [
+    "b9a1b0c4-4944-40f8-97da-cec58cc278ba": [
       {
-        "id": "4caf5344-b2a0-4229-9cd1-33f339da4ea5",
-        "assetId": "5a4ee2c9-88c8-4fe9-baff-ab736846837b",
+        "id": "eb146457-63f8-4389-96b6-93ea4fbd4987",
+        "assetId": "b9a1b0c4-4944-40f8-97da-cec58cc278ba",
         "type": "Created",
-        "location": "Warehouse A — Shelf 7",
+        "location": "Warehouse A",
         "notes": "Batch PDY-2025-K22 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2025-12-30T04:21:21.176Z"
       },
       {
-        "id": "bf4b387e-ab91-44c7-8c9d-8da28625206b",
-        "assetId": "5a4ee2c9-88c8-4fe9-baff-ab736846837b",
+        "id": "f908e4cf-3a66-4eb5-a059-a6ef9dab8add",
+        "assetId": "b9a1b0c4-4944-40f8-97da-cec58cc278ba",
         "type": "Stored",
-        "location": "Warehouse A — Shelf 7",
+        "location": "Warehouse A",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2025-12-30T05:21:21.176Z"
       }
     ],
-    "b1b2633a-5802-4159-8590-eb0ad05d490f": [
+    "0c719b21-87b8-48f4-94bb-6c4f1080c6d8": [
       {
-        "id": "4bb52483-e0bc-45f5-9dce-86bbba7585db",
-        "assetId": "b1b2633a-5802-4159-8590-eb0ad05d490f",
+        "id": "f16a53a3-a92b-4f31-9d2f-404ee44941f5",
+        "assetId": "0c719b21-87b8-48f4-94bb-6c4f1080c6d8",
         "type": "Created",
-        "location": "Warehouse C — Pallet 5",
+        "location": "Warehouse C",
         "notes": "Batch CTN-2026-D19 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-09T04:21:21.176Z"
       },
       {
-        "id": "05fdd255-37cc-4537-afa6-015ce29db41b",
-        "assetId": "b1b2633a-5802-4159-8590-eb0ad05d490f",
+        "id": "ec6d09ea-dfbc-43e9-9cc2-81c54703ac4e",
+        "assetId": "0c719b21-87b8-48f4-94bb-6c4f1080c6d8",
         "type": "Stored",
-        "location": "Warehouse C — Pallet 5",
+        "location": "Warehouse C",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-09T05:21:21.176Z"
+      },
+      {
+        "id": "9bce1f4e-6617-4c99-bb72-9ed8a5425d92",
+        "assetId": "0c719b21-87b8-48f4-94bb-6c4f1080c6d8",
+        "type": "Stored",
+        "location": "Warehouse C",
+        "notes": "Re-verified batch quality after supplier audit.",
+        "timestamp": "2026-04-13T04:21:21.176Z"
       }
     ],
-    "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218": [
+    "c20e5bb8-cd53-4b45-a33f-a22e571ca40d": [
       {
-        "id": "b3641ed7-93bd-478a-9491-12ee64ad04c5",
-        "assetId": "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218",
+        "id": "129e00a0-02a6-476d-9e09-2f848a6a2cb0",
+        "assetId": "c20e5bb8-cd53-4b45-a33f-a22e571ca40d",
         "type": "Created",
         "location": "Cold Storage 1",
         "notes": "Batch TMT-2026-E03 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-19T04:21:21.176Z"
       },
       {
-        "id": "82a0ed62-5841-4dc9-a617-e5dc45807501",
-        "assetId": "d2fa3f21-9a5e-42a1-ade9-4801f6a9e218",
+        "id": "061c8a16-762d-47fb-8072-ea5097c9e08d",
+        "assetId": "c20e5bb8-cd53-4b45-a33f-a22e571ca40d",
         "type": "Stored",
         "location": "Cold Storage 1",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-19T05:21:21.176Z"
       }
     ],
-    "2af5dcdb-f548-4511-b564-9881137c7f50": [
+    "cbdf6a41-9386-49da-a881-fa14d9517c06": [
       {
-        "id": "757c2eda-4994-43bc-b264-95ddbce731b6",
-        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "id": "48ba589e-af25-4041-93f6-4e41115999cd",
+        "assetId": "cbdf6a41-9386-49da-a881-fa14d9517c06",
         "type": "Created",
-        "location": "Warehouse B — Bin 4",
+        "location": "Warehouse B",
         "notes": "Batch SBN-2026-F08 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-14T04:21:21.176Z"
       },
       {
-        "id": "d2e92dab-5db6-40a2-bd92-6d032680cca1",
-        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "id": "1c8b876a-2853-49bd-9e9f-87b78b901a93",
+        "assetId": "cbdf6a41-9386-49da-a881-fa14d9517c06",
         "type": "Stored",
-        "location": "Warehouse B — Bin 4",
+        "location": "Warehouse B",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-14T05:21:21.176Z"
       },
       {
-        "id": "977563d1-8eac-471e-8b4b-80894d4dc50a",
-        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "id": "559a4688-63ed-4337-bbe9-1c5eac7ea9b6",
+        "assetId": "cbdf6a41-9386-49da-a881-fa14d9517c06",
         "type": "Dispatched",
         "location": "Vehicle MH-12-XY-9087",
         "notes": "Outbound to regional dealer network.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-17T04:21:21.176Z"
       },
       {
-        "id": "0705f624-cf8a-495f-9f45-e143e1b57950",
-        "assetId": "2af5dcdb-f548-4511-b564-9881137c7f50",
+        "id": "cec7e682-09a6-4e83-bb76-5077d8fa9f82",
+        "assetId": "cbdf6a41-9386-49da-a881-fa14d9517c06",
         "type": "Delivered",
-        "location": "Pune Dealer Warehouse",
+        "location": "Dealer Hub South",
         "notes": "Signed for by R. Kulkarni.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-04-20T04:21:21.176Z"
       }
     ],
-    "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066": [
+    "6443fb92-6eba-4387-8c70-bfe7cab9428d": [
       {
-        "id": "8a63b51f-1f51-47e5-913d-20610be346f9",
-        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "id": "33ce7207-4222-4d69-881a-92c33d86e02e",
+        "assetId": "6443fb92-6eba-4387-8c70-bfe7cab9428d",
         "type": "Created",
-        "location": "Warehouse A — Shelf 12",
+        "location": "Warehouse A",
         "notes": "Batch ONI-2025-G14 registered into the system.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-01-29T04:21:21.176Z"
       },
       {
-        "id": "9b77736b-262a-4677-826c-6f27712e40e2",
-        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "id": "fced7a17-33c2-4075-9606-a9ec26e7addb",
+        "assetId": "6443fb92-6eba-4387-8c70-bfe7cab9428d",
         "type": "Stored",
-        "location": "Warehouse A — Shelf 12",
+        "location": "Warehouse A",
         "notes": "Quality check passed and moved to storage.",
-        "timestamp": "2026-04-28T10:20:08.006Z"
+        "timestamp": "2026-01-29T05:21:21.176Z"
+      }
+    ],
+    "4fa91489-9892-4b8f-ad87-f56e8ee1c247": [
+      {
+        "id": "58862d97-6fd0-48b3-bf49-20233d8e0cf4",
+        "assetId": "4fa91489-9892-4b8f-ad87-f56e8ee1c247",
+        "type": "Created",
+        "location": "Cold Storage 1",
+        "notes": "Batch SFL-2026-H01 registered into the system.",
+        "timestamp": "2026-04-04T04:21:21.176Z"
       },
       {
-        "id": "e9e2e4fa-eb7d-48a4-8047-120a2d963927",
-        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "id": "d8618331-09f2-44d3-bf41-1c21ce153445",
+        "assetId": "4fa91489-9892-4b8f-ad87-f56e8ee1c247",
         "type": "Stored",
-        "location": "Pune",
-        "notes": "",
-        "timestamp": "2026-04-28T10:30:39.257Z"
+        "location": "Cold Storage 1",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-04T05:21:21.176Z"
+      }
+    ],
+    "f1bbc332-75bc-42ec-8af3-c8a6da23c35d": [
+      {
+        "id": "ee05f2a5-36ee-4888-9365-c828f49248aa",
+        "assetId": "f1bbc332-75bc-42ec-8af3-c8a6da23c35d",
+        "type": "Created",
+        "location": "Warehouse C",
+        "notes": "Batch COR-2026-I06 registered into the system.",
+        "timestamp": "2026-04-24T04:21:21.176Z"
       },
       {
-        "id": "6042db4b-e9fa-4907-838f-4dc61ef6f6e4",
-        "assetId": "bcf2cf1e-dc6e-40cd-88f2-895cb05fd066",
+        "id": "aada5fe9-01be-40f7-bb70-44684d827232",
+        "assetId": "f1bbc332-75bc-42ec-8af3-c8a6da23c35d",
         "type": "Stored",
-        "location": "Pune",
-        "notes": "",
-        "timestamp": "2026-04-28T10:49:13.527Z"
+        "location": "Warehouse C",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-24T05:21:21.176Z"
+      }
+    ],
+    "3de9acc7-2238-4d74-abfe-89a73f17839f": [
+      {
+        "id": "50b254ea-923d-4fc1-ac80-f8820ed6bfd7",
+        "assetId": "3de9acc7-2238-4d74-abfe-89a73f17839f",
+        "type": "Created",
+        "location": "Warehouse B",
+        "notes": "Batch GND-2026-J03 registered into the system.",
+        "timestamp": "2026-04-17T04:21:21.176Z"
+      },
+      {
+        "id": "49124b6a-92a6-49b7-a413-594cba6db218",
+        "assetId": "3de9acc7-2238-4d74-abfe-89a73f17839f",
+        "type": "Stored",
+        "location": "Warehouse B",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-17T05:21:21.176Z"
+      }
+    ],
+    "3deea9c9-f4f1-47c9-861d-6d35d5927d9c": [
+      {
+        "id": "8d302b59-af8c-4f7e-a951-8238ad47f862",
+        "assetId": "3deea9c9-f4f1-47c9-861d-6d35d5927d9c",
+        "type": "Created",
+        "location": "Cold Storage 2",
+        "notes": "Batch BTG-2026-K11 registered into the system.",
+        "timestamp": "2026-04-21T04:21:21.176Z"
+      },
+      {
+        "id": "788779d1-30af-4a0a-a618-73b91dc3f80c",
+        "assetId": "3deea9c9-f4f1-47c9-861d-6d35d5927d9c",
+        "type": "Stored",
+        "location": "Cold Storage 2",
+        "notes": "Quality check passed and moved to storage.",
+        "timestamp": "2026-04-21T05:21:21.176Z"
       }
     ]
-  }
+  },
+  "movements": [
+    {
+      "id": "6943b5d4-5302-4354-a310-de6eae4863f4",
+      "assetId": "d7762e79-9297-4496-ad74-7727c80bc0b7",
+      "movementType": "IN",
+      "quantity": 100,
+      "toLocation": "Cold Storage 2",
+      "date": "2026-03-20",
+      "notes": "Received from Syngenta India warehouse.",
+      "createdAt": "2026-03-20T04:21:21.176Z"
+    },
+    {
+      "id": "3b76939e-d2fa-41cd-99d1-608d223d0632",
+      "assetId": "cbdf6a41-9386-49da-a881-fa14d9517c06",
+      "movementType": "OUT",
+      "quantity": 50,
+      "fromLocation": "Warehouse B",
+      "date": "2026-03-25",
+      "notes": "Dispatched to Coimbatore dealer.",
+      "createdAt": "2026-03-25T04:21:21.176Z"
+    },
+    {
+      "id": "a088cca9-eb77-440c-ad03-48920056bc9b",
+      "assetId": "0c719b21-87b8-48f4-94bb-6c4f1080c6d8",
+      "movementType": "IN",
+      "quantity": 200,
+      "toLocation": "Warehouse B",
+      "date": "2026-03-30",
+      "notes": "Inbound from Mahyco distribution center.",
+      "createdAt": "2026-03-30T04:21:21.176Z"
+    },
+    {
+      "id": "c6cd798a-6cf1-4cd0-9451-b7617b06b751",
+      "assetId": "4d7ba35d-472a-426b-8f48-c06a3534d03e",
+      "movementType": "OUT",
+      "quantity": 80,
+      "fromLocation": "Warehouse A",
+      "date": "2026-04-04",
+      "notes": "Sold to Punjab retailer — batch partially fulfilled.",
+      "createdAt": "2026-04-04T04:21:21.176Z"
+    },
+    {
+      "id": "d0683461-0c5b-480d-9627-af88e4333976",
+      "assetId": "c20e5bb8-cd53-4b45-a33f-a22e571ca40d",
+      "movementType": "TRANSFER",
+      "quantity": 150,
+      "fromLocation": "Cold Storage 1",
+      "toLocation": "Cold Storage 2",
+      "date": "2026-04-09",
+      "notes": "Moved to cold storage for extended shelf life.",
+      "createdAt": "2026-04-09T04:21:21.176Z"
+    },
+    {
+      "id": "28f5a7fb-2f27-4975-8ce1-ce3869bec0f6",
+      "assetId": "4fa91489-9892-4b8f-ad87-f56e8ee1c247",
+      "movementType": "IN",
+      "quantity": 75,
+      "toLocation": "Warehouse B",
+      "date": "2026-04-14",
+      "notes": "Received from Karnataka State Seeds Corp.",
+      "createdAt": "2026-04-14T04:21:21.176Z"
+    },
+    {
+      "id": "70164f47-b7af-4c63-948d-bf98d7507269",
+      "assetId": "3de9acc7-2238-4d74-abfe-89a73f17839f",
+      "movementType": "OUT",
+      "quantity": 120,
+      "fromLocation": "Warehouse B",
+      "date": "2026-04-19",
+      "notes": "Outbound to dealer network — quarterly supply.",
+      "createdAt": "2026-04-19T04:21:21.176Z"
+    }
+  ],
+  "locations": [
+    "Warehouse A",
+    "Warehouse B",
+    "Warehouse C",
+    "Cold Storage 1",
+    "Cold Storage 2",
+    "Dealer Hub North",
+    "Dealer Hub South",
+    "Processing Unit"
+  ]
 }

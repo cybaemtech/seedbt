@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
+  version: 0.2.0
   description: SeedTrack Pro API - Asset & Batch Management
 servers:
   - url: /api
@@ -16,6 +16,12 @@ tags:
     description: Batch movement history operations
   - name: dashboard
     description: Dashboard summaries and alerts
+  - name: movements
+    description: Stock movement operations
+  - name: locations
+    description: Location management
+  - name: analytics
+    description: Analytics data
 paths:
   /healthz:
     get:
@@ -208,6 +214,119 @@ paths:
                 items:
                   $ref: "#/components/schemas/RecentActivity"
 
+  /movements:
+    get:
+      operationId: listMovements
+      tags: [movements]
+      summary: List all stock movements
+      parameters:
+        - in: query
+          name: assetId
+          schema:
+            type: string
+        - in: query
+          name: movementType
+          schema:
+            $ref: "#/components/schemas/StockMovementType"
+        - in: query
+          name: fromDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: toDate
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: List of stock movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StockMovement"
+    post:
+      operationId: createMovement
+      tags: [movements]
+      summary: Create a stock movement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StockMovementInput"
+      responses:
+        "201":
+          description: Movement created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockMovement"
+
+  /locations:
+    get:
+      operationId: listLocations
+      tags: [locations]
+      summary: List all locations
+      responses:
+        "200":
+          description: List of location names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    post:
+      operationId: addLocation
+      tags: [locations]
+      summary: Add a new location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationInput"
+      responses:
+        "201":
+          description: Location added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /locations/{name}:
+    delete:
+      operationId: deleteLocation
+      tags: [locations]
+      summary: Delete a location
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /analytics:
+    get:
+      operationId: getAnalytics
+      tags: [analytics]
+      summary: Get analytics data
+      responses:
+        "200":
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsData"
+
 components:
   schemas:
     HealthStatus:
@@ -221,9 +340,21 @@ components:
       type: string
       enum: [Fresh, Expiring, Expired]
 
+    SeedCategory:
+      type: string
+      enum: [Vegetable, Grain, Legume, Oilseed, Fiber, Spice, Fruit, Herb, Other]
+
+    ExpiryPriority:
+      type: string
+      enum: [SellImmediately, Monitor, Safe]
+
     MovementEventType:
       type: string
       enum: [Created, Stored, Dispatched, Delivered]
+
+    StockMovementType:
+      type: string
+      enum: [IN, OUT, TRANSFER]
 
     Asset:
       type: object
@@ -247,6 +378,26 @@ components:
         createdAt:
           type: string
           format: date-time
+        productionDate:
+          type: string
+          format: date
+        supplier:
+          type: string
+        category:
+          $ref: "#/components/schemas/SeedCategory"
+        germinationRate:
+          type: number
+          minimum: 0
+          maximum: 100
+        pricePerUnit:
+          type: number
+          minimum: 0
+        totalValue:
+          type: number
+        daysRemaining:
+          type: integer
+        expiryPriority:
+          $ref: "#/components/schemas/ExpiryPriority"
       required: [id, seedName, batchNumber, quantity, location, expiryDate, status, createdAt]
 
     AssetInput:
@@ -267,6 +418,20 @@ components:
         expiryDate:
           type: string
           format: date
+        productionDate:
+          type: string
+          format: date
+        supplier:
+          type: string
+        category:
+          $ref: "#/components/schemas/SeedCategory"
+        germinationRate:
+          type: number
+          minimum: 0
+          maximum: 100
+        pricePerUnit:
+          type: number
+          minimum: 0
       required: [seedName, batchNumber, quantity, location, expiryDate]
 
     MovementEvent:
@@ -299,6 +464,125 @@ components:
           type: string
       required: [type, location]
 
+    StockMovement:
+      type: object
+      properties:
+        id:
+          type: string
+        assetId:
+          type: string
+        seedName:
+          type: string
+        batchNumber:
+          type: string
+        movementType:
+          $ref: "#/components/schemas/StockMovementType"
+        quantity:
+          type: integer
+          minimum: 1
+        fromLocation:
+          type: string
+        toLocation:
+          type: string
+        date:
+          type: string
+          format: date
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, assetId, seedName, batchNumber, movementType, quantity, date, createdAt]
+
+    StockMovementInput:
+      type: object
+      properties:
+        assetId:
+          type: string
+          minLength: 1
+        movementType:
+          $ref: "#/components/schemas/StockMovementType"
+        quantity:
+          type: integer
+          minimum: 1
+        fromLocation:
+          type: string
+        toLocation:
+          type: string
+        date:
+          type: string
+          format: date
+        notes:
+          type: string
+      required: [assetId, movementType, quantity, date]
+
+    LocationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required: [name]
+
+    AnalyticsData:
+      type: object
+      properties:
+        stockOverTime:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              quantity:
+                type: integer
+              label:
+                type: string
+            required: [date, quantity, label]
+        movementTrends:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              IN:
+                type: integer
+              OUT:
+                type: integer
+              TRANSFER:
+                type: integer
+            required: [date, IN, OUT, TRANSFER]
+        categoryDistribution:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                type: integer
+              totalValue:
+                type: number
+            required: [name, value]
+        locationStock:
+          type: array
+          items:
+            type: object
+            properties:
+              location:
+                type: string
+              quantity:
+                type: integer
+              batches:
+                type: integer
+            required: [location, quantity, batches]
+        totalInventoryValue:
+          type: number
+        riskValue:
+          type: number
+      required: [stockOverTime, movementTrends, categoryDistribution, locationStock, totalInventoryValue, riskValue]
+
     DashboardSummary:
       type: object
       properties:
@@ -314,7 +598,11 @@ components:
           type: integer
         fresh:
           type: integer
-      required: [totalAssets, totalQuantity, expiringSoon, lowStock, expired, fresh]
+        totalInventoryValue:
+          type: number
+        riskValue:
+          type: number
+      required: [totalAssets, totalQuantity, expiringSoon, lowStock, expired, fresh, totalInventoryValue, riskValue]
 
     AlertGroups:
       type: object

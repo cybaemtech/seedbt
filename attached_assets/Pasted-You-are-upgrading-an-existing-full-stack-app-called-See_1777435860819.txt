@@ -1,0 +1,211 @@
+You are upgrading an existing full-stack app called **SeedTrack Pro – Asset & Batch Management System**.
+
+The current app already has:
+
+* Inventory management (CRUD)
+* Batch tracking
+* Dashboard with alerts
+
+Your task is to TRANSFORM it into a **complete inventory + operations system for a seed company**.
+
+---
+
+🧱 CORE UPGRADES (MANDATORY)
+
+1. STOCK MOVEMENT SYSTEM
+
+* Add a new module: “Stock Movements”
+
+* Create a "Move Stock" feature with:
+
+  * movementType: IN, OUT, TRANSFER
+  * quantity
+  * fromLocation
+  * toLocation
+  * date
+  * notes
+
+* Update inventory quantities dynamically
+
+* Store all movements in JSON:
+  {
+  "movements": []
+  }
+
+* Link movements to asset/batch ID
+
+---
+
+2. MULTI-LOCATION SYSTEM
+
+* Create a separate location list:
+  {
+  "locations": ["Warehouse A", "Warehouse B", "Cold Storage", "Dealer"]
+  }
+
+* Allow:
+
+  * Assigning location to assets
+  * Filtering inventory by location
+  * Showing stock per location
+
+---
+
+3. ENHANCED BATCH DETAILS
+   Extend asset schema with:
+
+* productionDate
+* supplier
+* category (Vegetable, Grain, etc.)
+* germinationRate (%)
+* pricePerUnit
+
+Update forms + UI to support these fields.
+
+---
+
+4. INVENTORY VALUE & RISK
+
+* Calculate:
+
+  * totalValue = quantity × pricePerUnit
+  * riskValue = value of expiring/expired stock
+
+* Display on dashboard:
+
+  * Total Inventory Value
+  * Value at Risk
+
+---
+
+5. EXPIRY INTELLIGENCE
+
+* Calculate:
+
+  * daysRemaining = expiryDate - today
+
+* Add priority labels:
+
+  * 🔴 “Sell Immediately” (< 15 days)
+  * 🟡 “Monitor” (15–30 days)
+  * 🟢 “Safe” (> 30 days)
+
+* Show badges in inventory table
+
+---
+
+6. ANALYTICS MODULE
+   Create a new page: “Analytics”
+
+Include charts using recharts:
+
+* Line chart: stock over time
+* Bar chart: movement trends (IN vs OUT)
+* Pie chart: category distribution
+
+---
+
+7. STOCK FORECASTING (SIMPLE LOGIC)
+
+* Based on past OUT movements:
+
+  * calculate avg daily usage
+  * estimate:
+    “Stock will last X days”
+
+Display this in asset detail view.
+
+---
+
+8. QUALITY TRACKING
+
+* Show germinationRate with color:
+
+  * Green (>85%)
+  * Yellow (70–85%)
+  * Red (<70%)
+
+---
+
+9. REPORTS SYSTEM
+
+* Add “Export to CSV” button:
+
+  * Inventory report
+  * Expiry report
+
+---
+
+10. ACTIVITY LOG FILTERING
+
+* Allow filtering history by:
+
+  * date
+  * batch
+  * movement type
+
+---
+
+🎨 UI/UX UPGRADES (VERY IMPORTANT)
+
+* Upgrade to premium SaaS UI:
+
+  * Tailwind CSS
+  * rounded-2xl cards
+  * soft shadows
+  * gradients
+  * consistent spacing
+
+* Add:
+
+  * Tabs: Inventory | Movements | Analytics
+  * Advanced filters (status, location, category)
+  * Search bar (global)
+
+* Add:
+
+  * Toast notifications (success/error)
+  * Loading skeletons
+  * Smooth transitions
+
+* Add DARK MODE toggle
+
+---
+
+📂 BACKEND REQUIREMENTS
+
+* Extend JSON structure:
+  {
+  "assets": [],
+  "movements": [],
+  "locations": [],
+  "history": {}
+  }
+
+* Add APIs:
+
+  * GET/POST /movements
+  * GET /analytics
+  * GET /reports
+
+---
+
+🎯 GOAL
+
+This must feel like a **real operational system used by a seed company**, not a basic CRUD app.
+
+Focus on:
+
+* Real-world workflows
+* Clean UI
+* Meaningful insights
+
+Ensure the app is fully functional and runnable.
+
+---
+
+OUTPUT:
+
+* Updated frontend + backend code
+* Clear instructions to run
+* Include sample realistic seed data
