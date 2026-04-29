@@ -1,0 +1,3 @@
+ignore-scripts=false
+script-shell=powershell
+ignore-workspace-root-check=true
